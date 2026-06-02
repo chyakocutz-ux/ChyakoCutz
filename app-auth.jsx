@@ -1,34 +1,15 @@
 // Welcome + Auth screens
 // Welcome (splash) → SignUp / SignIn → Home (handled by parent)
 
-const StatusBar = () => (
-  <div className="statusbar">
-    <span>9:41</span>
-    <span className="statusbar-r">
-      <svg width="16" height="10" viewBox="0 0 16 10"><path d="M1 8h2v2H1zM5 6h2v4H5zM9 3h2v7H9zM13 0h2v10h-2z" fill="currentColor"/></svg>
-      <svg width="14" height="10" viewBox="0 0 14 10"><path d="M7 9.5c.6 0 1-.4 1-1s-.4-1-1-1-1 .4-1 1 .4 1 1 1zM7 5.5c1.4 0 2.7.5 3.7 1.4l-.8.8C9.2 7 8.2 6.5 7 6.5s-2.2.5-3 1.2l-.8-.8c1-.9 2.4-1.4 3.8-1.4zM7 1.5c2.5 0 4.8 1 6.6 2.5l-.9.9C11.2 3.6 9.2 2.7 7 2.7s-4.2.9-5.7 2.2l-.9-.9C2.2 2.5 4.5 1.5 7 1.5z" fill="currentColor"/></svg>
-      <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="1.5" fill="none" stroke="currentColor"/><rect x="2" y="2" width="14" height="6" fill="currentColor"/><rect x="19" y="3.5" width="1.5" height="3" fill="currentColor"/></svg>
-    </span>
-  </div>
-);
-
 // ------- WELCOME -------
 const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
-  const videoRef = React.useRef(null);
-  React.useEffect(() => {
-    if (videoRef.current) { videoRef.current.muted = true; videoRef.current.play().catch(() => {}); }
-  }, []);
-
   return (
     <div className="screen">
-      <video ref={videoRef} className="welcome-bg-video" autoPlay muted loop playsInline>
-        <source src="assets/bg1.mp4" type="video/mp4"/>
-      </video>
+      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
       <div className="welcome-veil"/>
 
       <div className="welcome-body welcome-body-logo">
         <div>
-          <StatusBar/>
           <div className="welcome-top" style={{ marginTop: 14, padding: '0 0' }}>
             <div className="welcome-badge">
               <span className="welcome-badge-dot"/>
@@ -105,7 +86,6 @@ const SignUpScreen = ({ onBack, onSubmit, onSwitchToSignIn }) => {
 
   return (
     <div className="screen">
-      <StatusBar/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
@@ -189,7 +169,6 @@ const SignInScreen = ({ onBack, onSubmit, onSwitchToSignUp }) => {
 
   return (
     <div className="screen">
-      <StatusBar/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
@@ -275,7 +254,6 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
 
   return (
     <div className="screen owner-login-screen">
-      <StatusBar/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
@@ -315,4 +293,4 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
   );
 };
 
-Object.assign(window, { WelcomeScreen, SignUpScreen, SignInScreen, OwnerLoginScreen, StatusBar });
+Object.assign(window, { WelcomeScreen, SignUpScreen, SignInScreen, OwnerLoginScreen });

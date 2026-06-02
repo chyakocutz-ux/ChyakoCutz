@@ -2,23 +2,22 @@
 // account sections, and the centered BOOK button in the bottom nav.
 
 window.appStylesExtra = `
-  /* ============ WELCOME BG VIDEO (fitted, pure-black letterbox) ============ */
+  /* ============ WELCOME BG IMAGE ============ */
   .welcome-bg-video {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     background-color: #000;
-    filter: contrast(1.05) saturate(1.05) brightness(0.95);
   }
   /* Ensure the surrounding screen + body fade also bottom out at pure black */
   .screen:has(.welcome-bg-video) { background: #000 !important; }
   .screen:has(.welcome-bg-video) .welcome-veil {
     background:
       linear-gradient(180deg,
-        rgba(0,0,0,0.35) 0%,
-        rgba(0,0,0,0.05) 22%,
-        rgba(0,0,0,0.05) 55%,
-        rgba(0,0,0,0.85) 88%,
+        rgba(0,0,0,0.15) 0%,
+        rgba(0,0,0,0.0) 25%,
+        rgba(0,0,0,0.0) 50%,
+        rgba(0,0,0,0.7) 85%,
         #000 100%) !important;
   }
   /* Override the dark veil with a softer bottom-only gradient so the logo reads */

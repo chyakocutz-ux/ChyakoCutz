@@ -144,8 +144,6 @@ const AppShell = () => {
 
   return (
     <div className="app">
-      <window.StatusBar/>
-
       {/* TOPBAR */}
       <div className="topbar">
         <div className="topbar-l">
