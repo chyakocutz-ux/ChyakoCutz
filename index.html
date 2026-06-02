@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000" />
+  <title>Chyako Cutz</title>
+  <link rel="icon" href="assets/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #000;
+      min-height: 100vh;
+      font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+      color: #f4ebd6;
+      overflow: hidden;
+    }
+    #root { width: 100%; min-height: 100vh; }
+    .boot {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+      background: #000;
+      color: #e8c268;
+      font-family: 'Pirata One', serif;
+      font-size: 48px;
+      letter-spacing: 0.05em;
+    }
+    .boot-spinner {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(232, 194, 104, 0.2);
+      border-top-color: #e8c268;
+      border-radius: 50%;
+      animation: bspin 1s linear infinite;
+    }
+    @keyframes bspin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="boot">
+      <div class="boot-spinner"></div>
+      <div>CHYAKO//CUTZ</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <!-- Firebase v9 Compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <!-- Data + Styles -->
+  <script src="data.js"></script>
+  <script src="app-styles.js"></script>
+  <script src="app-styles-extra.js"></script>
+
+  <!-- App pieces (order matters — shell last) -->
+  <script type="text/babel" src="app-auth.jsx"></script>
+  <script type="text/babel" src="app-home.jsx"></script>
+  <script type="text/babel" src="app-bookings.jsx"></script>
+  <script type="text/babel" src="app-account.jsx"></script>
+  <script type="text/babel" src="app-book-sheet.jsx"></script>
+  <script type="text/babel" src="app-owner.jsx"></script>
+  <script type="text/babel" src="app-shell.jsx"></script>
+
+  <script type="text/babel">
+    const Root = () => (
+      <div className="stage">
+        <style>{window.appStyles}</style>
+        <style>{window.appStylesExtra}</style>
+        <div className="phone">
+          <window.AppShell/>
+        </div>
+      </div>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+  </script>
+</body>
+</html>

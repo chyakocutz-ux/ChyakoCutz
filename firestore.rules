@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can only read/write their own profile
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Bookings — customers see only theirs, owner sees all
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+      );
+      allow create: if request.auth != null && (
+        request.resource.data.uid == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+      );
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+      );
+      allow delete: if false;
+    }
+  }
+}
