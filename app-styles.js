@@ -220,7 +220,7 @@ window.appStyles = `
 
   /* ============ AUTH SCREENS ============ */
   .auth {
-    position: relative; z-index: 1;
+    position: relative; z-index: 3;
     flex: 1; display: flex; flex-direction: column;
     padding: 4px 28px 24px;
     background:
