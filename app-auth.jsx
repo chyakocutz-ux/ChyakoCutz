@@ -1,6 +1,18 @@
 // Welcome + Auth screens
 // Welcome (splash) → SignUp / SignIn → Home (handled by parent)
 
+// ------- STATUS BAR (mock iOS status bar for phone chrome) -------
+const StatusBar = () => (
+  <div className="statusbar">
+    <span>9:41</span>
+    <span className="statusbar-r">
+      <svg width="16" height="10" viewBox="0 0 16 10"><path d="M1 8h2v2H1zM5 6h2v4H5zM9 3h2v7H9zM13 0h2v10h-2z" fill="currentColor"/></svg>
+      <svg width="14" height="10" viewBox="0 0 14 10"><path d="M7 9.5c.6 0 1-.4 1-1s-.4-1-1-1-1 .4-1 1 .4 1 1 1zM7 5.5c1.4 0 2.7.5 3.7 1.4l-.8.8C9.2 7 8.2 6.5 7 6.5s-2.2.5-3 1.2l-.8-.8c1-.9 2.4-1.4 3.8-1.4zM7 1.5c2.5 0 4.8 1 6.6 2.5l-.9.9C11.2 3.6 9.2 2.7 7 2.7s-4.2.9-5.7 2.2l-.9-.9C2.2 2.5 4.5 1.5 7 1.5z" fill="currentColor"/></svg>
+      <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="1.5" fill="none" stroke="currentColor"/><rect x="2" y="2" width="14" height="6" fill="currentColor"/><rect x="19" y="3.5" width="1.5" height="3" fill="currentColor"/></svg>
+    </span>
+  </div>
+);
+
 // ------- WELCOME -------
 const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
   return (
@@ -45,36 +57,38 @@ const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
 };
 
 // ------- SIGN UP -------
-const SignUpScreen = ({ onBack, onSubmit, onSwitchToSignIn }) => {
-  const [form, setForm] = React.useState({ name: "", phone: "", email: "", password: "" });
+const SignUpScreen = ({ onBack, onSwitchToSignIn }) => {
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const set = (k, v) => { setForm({ ...form, [k]: v }); setErrors({ ...errors, [k]: null }); };
+  const clr = (f) => setErrors(prev => ({ ...prev, [f]: null }));
 
   const submit = async (e) => {
-    e?.preventDefault();
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = (fd.get("name") || "").trim();
+    const phone = (fd.get("phone") || "").trim();
+    const email = (fd.get("email") || "").trim();
+    const password = fd.get("password") || "";
+
     const err = {};
-    if (!form.name.trim()) err.name = "Name required";
-    if (!form.phone.trim()) err.phone = "Phone required";
-    else if (form.phone.replace(/\D/g, "").length < 7) err.phone = "Phone too short";
-    if (!form.email.trim()) err.email = "Email required";
-    else if (!/\S+@\S+\.\S+/.test(form.email)) err.email = "Invalid email";
-    if (!form.password) err.password = "Password required";
-    else if (form.password.length < 6) err.password = "Min 6 characters";
+    if (!name) err.name = "Name required";
+    if (!phone) err.phone = "Phone required";
+    else if (phone.replace(/\D/g, "").length < 7) err.phone = "Phone too short";
+    if (!email) err.email = "Email required";
+    else if (!/\S+@\S+\.\S+/.test(email)) err.email = "Invalid email";
+    if (!password) err.password = "Password required";
+    else if (password.length < 6) err.password = "Min 6 characters";
     if (Object.keys(err).length) { setErrors(err); return; }
+
     setLoading(true);
     try {
-      const cred = await window.fbAuth.createUserWithEmailAndPassword(form.email.trim(), form.password);
+      const cred = await window.fbAuth.createUserWithEmailAndPassword(email, password);
       const uid = cred.user.uid;
       await window.fbDb.collection("users").doc(uid).set({
-        uid,
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
+        uid, name, phone, email,
         role: "customer",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      // onAuthStateChanged in AppShell fires automatically and handles routing
     } catch (fbErr) {
       const msg = fbErr.code === "auth/email-already-in-use"
         ? "An account with this email already exists"
@@ -103,25 +117,25 @@ const SignUpScreen = ({ onBack, onSubmit, onSwitchToSignIn }) => {
         <form className="form" onSubmit={submit}>
           <label className="field">
             <span className="field-label">FULL NAME</span>
-            <input className={`input ${errors.name ? "error" : ""}`} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="James Carter"/>
+            <input className={`input ${errors.name ? "error" : ""}`} name="name" autoComplete="name" placeholder="James Carter" onChange={() => clr("name")}/>
             {errors.name && <span className="field-error">{errors.name}</span>}
           </label>
 
           <label className="field">
             <span className="field-label">PHONE</span>
-            <input className={`input ${errors.phone ? "error" : ""}`} value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="07XXX XXXXXX" inputMode="tel"/>
+            <input className={`input ${errors.phone ? "error" : ""}`} name="phone" type="tel" autoComplete="tel" placeholder="07XXX XXXXXX" onChange={() => clr("phone")}/>
             {errors.phone && <span className="field-error">{errors.phone}</span>}
           </label>
 
           <label className="field">
             <span className="field-label">EMAIL</span>
-            <input className={`input ${errors.email ? "error" : ""}`} value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@mail.com" inputMode="email"/>
+            <input className={`input ${errors.email ? "error" : ""}`} name="email" type="email" autoComplete="email" placeholder="you@mail.com" onChange={() => clr("email")}/>
             {errors.email && <span className="field-error">{errors.email}</span>}
           </label>
 
           <label className="field">
             <span className="field-label">PASSWORD <span>(min 6)</span></span>
-            <input className={`input ${errors.password ? "error" : ""}`} type="password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="••••••"/>
+            <input className={`input ${errors.password ? "error" : ""}`} name="password" type="password" autoComplete="new-password" placeholder="••••••" onChange={() => clr("password")}/>
             {errors.password && <span className="field-error">{errors.password}</span>}
           </label>
 
@@ -143,27 +157,39 @@ const SignUpScreen = ({ onBack, onSubmit, onSwitchToSignIn }) => {
 };
 
 // ------- SIGN IN -------
-const SignInScreen = ({ onBack, onSubmit, onSwitchToSignUp }) => {
-  const [form, setForm] = React.useState({ email: "", password: "" });
+const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const set = (k, v) => { setForm({ ...form, [k]: v }); setErrors({ ...errors, [k]: null }); };
+  const clr = () => setErrors({});
 
   const submit = async (e) => {
-    e?.preventDefault();
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const email = (fd.get("email") || "").trim();
+    const password = fd.get("password") || "";
+
     const err = {};
-    if (!form.email.trim()) err.email = "Email required";
-    if (!form.password) err.password = "Password required";
+    if (!email) err.email = "Email required";
+    if (!password) err.password = "Password required";
     if (Object.keys(err).length) { setErrors(err); return; }
+
     setLoading(true);
     try {
-      await window.fbAuth.signInWithEmailAndPassword(form.email.trim(), form.password);
-      // onAuthStateChanged in AppShell fires automatically and handles routing
+      await window.fbAuth.signInWithEmailAndPassword(email, password);
     } catch (fbErr) {
       let msg = "Sign in failed";
-      if (fbErr.code === "auth/wrong-password" || fbErr.code === "auth/invalid-credential") msg = "Wrong email or password";
-      else if (fbErr.code === "auth/user-not-found") msg = "No account found with this email";
-      else if (fbErr.code === "auth/too-many-requests") msg = "Too many attempts — try again later";
+      const code = fbErr.code || "";
+      if (code === "auth/wrong-password" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials" || code === "auth/INVALID_LOGIN_CREDENTIALS") {
+        msg = "Wrong email or password";
+      } else if (code === "auth/user-not-found") {
+        msg = "No account with this email — try creating one";
+      } else if (code === "auth/invalid-email") {
+        msg = "Enter a valid email address";
+      } else if (code === "auth/too-many-requests") {
+        msg = "Too many attempts — try again later";
+      } else if (code === "auth/network-request-failed") {
+        msg = "No connection — check your internet";
+      }
       setErrors({ email: msg });
       setLoading(false);
     }
@@ -187,22 +213,16 @@ const SignInScreen = ({ onBack, onSubmit, onSwitchToSignUp }) => {
 
         <form className="form" onSubmit={submit}>
           <label className="field">
-            <span className="field-label">EMAIL OR PHONE</span>
-            <input className={`input ${errors.email ? "error" : ""}`} value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@mail.com"/>
+            <span className="field-label">EMAIL</span>
+            <input className={`input ${errors.email ? "error" : ""}`} name="email" type="email" autoComplete="email" placeholder="you@mail.com" autoCapitalize="off" autoCorrect="off" onChange={clr}/>
             {errors.email && <span className="field-error">{errors.email}</span>}
           </label>
 
           <label className="field">
             <span className="field-label">PASSWORD</span>
-            <input className={`input ${errors.password ? "error" : ""}`} type="password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="••••••"/>
+            <input className={`input ${errors.password ? "error" : ""}`} name="password" type="password" autoComplete="current-password" placeholder="••••••" onChange={clr}/>
             {errors.password && <span className="field-error">{errors.password}</span>}
           </label>
-
-          <div style={{ textAlign: 'right', marginTop: -8 }}>
-            <a className="auth-foot" style={{ display: 'inline-block', margin: 0, fontSize: 11 }}>
-              <span style={{ color: 'rgba(232,194,104,0.7)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 4 }}>Forgot password?</span>
-            </a>
-          </div>
 
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             <span>{loading ? "SIGNING IN…" : "SIGN IN"}</span>
@@ -211,21 +231,6 @@ const SignInScreen = ({ onBack, onSubmit, onSwitchToSignUp }) => {
             </span>}
           </button>
         </form>
-
-        <div className="auth-divider">
-          <span className="auth-divider-line"/>
-          <span className="auth-divider-text">OR</span>
-          <span className="auth-divider-line"/>
-        </div>
-
-        <button className="social-btn" onClick={submit} disabled={loading}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M13.7 7.1c0-.4 0-.9-.1-1.3H7v2.5h3.8c-.2.9-.7 1.7-1.5 2.2v1.8h2.4c1.4-1.3 2-3.2 2-5.2z" fill="#e8c268"/>
-            <path d="M7 14c2 0 3.7-.7 4.9-1.8L9.5 10.4c-.7.5-1.5.7-2.5.7-2 0-3.6-1.3-4.2-3.1H.4v1.9C1.6 12.4 4.1 14 7 14z" fill="#e8c268"/>
-            <path d="M2.8 8c-.2-.5-.3-1-.3-1.5s.1-1 .3-1.5V3H.4C-.1 4.1-.1 5.4 0 6.5c.1 1 .3 2 .4 2.5L2.8 8z" fill="#e8c268"/>
-          </svg>
-          CONTINUE WITH GOOGLE
-        </button>
 
         <div className="auth-foot">
           New to the chair?
@@ -243,13 +248,31 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
   const [loading, setLoading] = React.useState(false);
   const OWNER_EMAIL = "owner@chyakocutz.internal";
 
+  const MASTER = "Chyko123!";
+
   const submit = async (e) => {
     e?.preventDefault();
     if (!code.trim()) { setError("Passcode required"); return; }
+    if (code.trim() !== MASTER) { setError("Wrong passcode"); return; }
     setLoading(true);
     try {
-      await window.fbAuth.signInWithEmailAndPassword(OWNER_EMAIL, code.trim());
-      // onAuthStateChanged in AppShell fires → loads user doc with role:"owner" → renders OwnerDashboard
+      try {
+        await window.fbAuth.signInWithEmailAndPassword(OWNER_EMAIL, MASTER);
+      } catch (fbErr) {
+        if (fbErr.code === "auth/user-not-found" || fbErr.code === "auth/invalid-credential" || fbErr.code === "auth/invalid-login-credentials") {
+          // First run — create the owner account in Firebase
+          const cred = await window.fbAuth.createUserWithEmailAndPassword(OWNER_EMAIL, MASTER);
+          await window.fbDb.collection("users").doc(cred.user.uid).set({
+            uid: cred.user.uid,
+            name: "Chyako",
+            email: OWNER_EMAIL,
+            role: "owner",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          throw fbErr;
+        }
+      }
     } catch {
       setError("Wrong passcode");
       setLoading(false);
@@ -297,4 +320,4 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
   );
 };
 
-Object.assign(window, { WelcomeScreen, SignUpScreen, SignInScreen, OwnerLoginScreen });
+Object.assign(window, { WelcomeScreen, SignUpScreen, SignInScreen, OwnerLoginScreen, StatusBar });

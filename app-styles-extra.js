@@ -8,6 +8,7 @@ window.appStylesExtra = `
     width: 100%; height: 100%;
     object-fit: cover;
     background-color: #000;
+    pointer-events: none;
   }
   /* Ensure the surrounding screen + body fade also bottom out at pure black */
   .screen:has(.welcome-bg-video) { background: #000 !important; }
