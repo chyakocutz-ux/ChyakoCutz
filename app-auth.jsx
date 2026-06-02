@@ -86,6 +86,8 @@ const SignUpScreen = ({ onBack, onSubmit, onSwitchToSignIn }) => {
 
   return (
     <div className="screen">
+      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <div className="welcome-veil"/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
@@ -169,6 +171,8 @@ const SignInScreen = ({ onBack, onSubmit, onSwitchToSignUp }) => {
 
   return (
     <div className="screen">
+      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <div className="welcome-veil"/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">

@@ -225,7 +225,7 @@ window.appStyles = `
     padding: 4px 28px 24px;
     background:
       radial-gradient(ellipse at top, rgba(232, 194, 104, 0.06) 0%, transparent 50%),
-      var(--ink);
+      rgba(13, 12, 10, 0.72);
   }
   .auth-head {
     display: flex; justify-content: space-between; align-items: center;
