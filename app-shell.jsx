@@ -23,7 +23,9 @@ const AppShell = () => {
   const [bookings, setBookings] = React.useState([]);
   const [listenerError, setListenerError] = React.useState(false);
   const [toasts, setToasts] = React.useState([]);
+  const [showNotifPrompt, setShowNotifPrompt] = React.useState(false);
   const notifInitialized = React.useRef(false);
+  const notifPromptPending = React.useRef(false);
 
   // Firebase Auth listener — single source of truth for user state
   React.useEffect(() => {
@@ -96,6 +98,48 @@ const AppShell = () => {
     return unsub;
   }, [user?.uid, user?.role]);
 
+  // Silently refresh FCM token if permission already granted
+  React.useEffect(() => {
+    if (!user?.uid || !window.fbMessaging) return;
+    if (Notification?.permission !== "granted") return;
+    window.fbMessaging.getToken({ vapidKey: window.CHYAKO_VAPID_KEY })
+      .then(token => {
+        if (!token) return;
+        window.fbDb.collection("users").doc(user.uid).update({
+          fcmTokens: firebase.firestore.FieldValue.arrayUnion(token)
+        }).catch(() => {});
+      })
+      .catch(() => {});
+  }, [user?.uid]);
+
+  // Show permission prompt to owner on first dashboard load
+  React.useEffect(() => {
+    if (!user?.uid || user.role !== "owner") return;
+    if (localStorage.getItem("notif_asked")) return;
+    if (Notification?.permission !== "default") return;
+    const t = setTimeout(() => setShowNotifPrompt(true), 1400);
+    return () => clearTimeout(t);
+  }, [user?.uid, user?.role]);
+
+  const handleAllowNotifications = async () => {
+    localStorage.setItem("notif_asked", "1");
+    setShowNotifPrompt(false);
+    if (!window.fbMessaging) return;
+    try {
+      const token = await window.fbMessaging.getToken({ vapidKey: window.CHYAKO_VAPID_KEY });
+      if (token && user?.uid) {
+        await window.fbDb.collection("users").doc(user.uid).update({
+          fcmTokens: firebase.firestore.FieldValue.arrayUnion(token)
+        });
+      }
+    } catch (_) {}
+  };
+
+  const dismissNotifPrompt = () => {
+    localStorage.setItem("notif_asked", "1");
+    setShowNotifPrompt(false);
+  };
+
   const signOut = () => {
     setTab("home");
     setSheet(null);
@@ -120,11 +164,15 @@ const AppShell = () => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       read: false
     }).catch(() => {});
+    // Queue the notification permission prompt after this first booking
+    if (Notification?.permission === "default" && !localStorage.getItem("notif_asked")) {
+      notifPromptPending.current = true;
+    }
     return ref.id;
   };
 
   const cancelBooking = async (id) => {
-    await window.fbDb.collection("bookings").doc(id).update({ status: "cancelled" });
+    await window.fbDb.collection("bookings").doc(id).update({ status: "cancelled", cancelledBy: "customer" });
     const booking = bookings.find(b => b.id === id);
     if (booking) {
       window.fbDb.collection("notifications").doc("owner_inbox").collection("items").add({
@@ -145,7 +193,8 @@ const AppShell = () => {
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
 
   const setBookingStatus = async (id, status) => {
-    await window.fbDb.collection("bookings").doc(id).update({ status });
+    const extra = status === "cancelled" ? { cancelledBy: "owner" } : {};
+    await window.fbDb.collection("bookings").doc(id).update({ status, ...extra });
     if (status === "cancelled") {
       const booking = bookings.find(b => b.id === id);
       if (booking?.uid) {
@@ -213,6 +262,31 @@ const AppShell = () => {
     </div>
   );
 
+  const isOwner = user?.role === "owner";
+  const NotifPrompt = () => !showNotifPrompt ? null : (
+    <>
+      <div className="notif-overlay" onClick={dismissNotifPrompt}/>
+      <div className="notif-prompt">
+        <div className="notif-prompt-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#e8c268" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#e8c268" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div className="notif-prompt-title">STAY UPDATED</div>
+        <div className="notif-prompt-body">
+          {isOwner
+            ? "New bookings and cancellations reach your phone straight away — even when the app is closed."
+            : "Booking changes and cancellations from the shop reach your lock screen straight away."}
+        </div>
+        <button className="notif-prompt-allow" onClick={handleAllowNotifications}>
+          ALLOW NOTIFICATIONS
+        </button>
+        <button className="notif-prompt-skip" onClick={dismissNotifPrompt}>Not now</button>
+      </div>
+    </>
+  );
+
   // ---------- OWNER DASHBOARD ----------
   if (user.role === "owner") {
     return (
@@ -224,6 +298,7 @@ const AppShell = () => {
           onSignOut={signOut}
         />
         <ToastLayer/>
+        <NotifPrompt/>
       </>
     );
   }
@@ -323,7 +398,13 @@ const AppShell = () => {
         <window.BookSheet
           user={user}
           bookings={bookings}
-          onClose={() => setSheet(null)}
+          onClose={() => {
+            setSheet(null);
+            if (notifPromptPending.current) {
+              notifPromptPending.current = false;
+              setTimeout(() => setShowNotifPrompt(true), 350);
+            }
+          }}
           onConfirm={(payload) => addBooking(payload)}
         />
       )}
@@ -345,6 +426,7 @@ const AppShell = () => {
         />
       )}
       <ToastLayer/>
+      <NotifPrompt/>
     </div>
   );
 };

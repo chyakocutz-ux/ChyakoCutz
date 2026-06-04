@@ -11,3 +11,14 @@ firebase.initializeApp(firebaseConfig);
 
 window.fbAuth = firebase.auth();
 window.fbDb   = firebase.firestore();
+
+// VAPID key: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Key pair
+window.CHYAKO_VAPID_KEY = "YOUR_VAPID_KEY_FROM_FIREBASE_CONSOLE";
+
+try {
+  window.fbMessaging = firebase.messaging();
+  // Foreground messages are handled by the Firestore toast system — suppress duplicate FCM popups
+  window.fbMessaging.onMessage(() => {});
+} catch (_) {
+  window.fbMessaging = null;
+}

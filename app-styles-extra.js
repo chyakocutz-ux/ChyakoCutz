@@ -660,4 +660,57 @@ window.appStylesExtra = `
     color: #e8c268; margin-bottom: 3px;
   }
   .toast-msg { font-size: 11px; color: rgba(244,235,214,0.8); line-height: 1.4; }
+
+  /* ============ NOTIFICATION PERMISSION PROMPT ============ */
+  .notif-overlay {
+    position: absolute; inset: 0; z-index: 400;
+    background: rgba(0,0,0,0.55);
+  }
+  .notif-prompt {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 401;
+    background: #0a0806;
+    border-radius: 20px 20px 0 0;
+    padding: 32px 24px 44px;
+    box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
+    animation: slideUp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  }
+  .notif-prompt-icon {
+    width: 56px; height: 56px;
+    background: rgba(232,194,104,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 22px;
+  }
+  .notif-prompt-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: #f4ebd6; text-align: center; margin-bottom: 12px;
+  }
+  .notif-prompt-body {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; line-height: 1.6;
+    color: rgba(244,235,214,0.55);
+    text-align: center;
+    max-width: 270px; margin: 0 auto 28px;
+  }
+  .notif-prompt-allow {
+    display: block; width: 100%;
+    padding: 14px; margin-bottom: 14px;
+    background: #e8c268; color: #000;
+    border: none; border-radius: 100px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .notif-prompt-allow:active { background: #f4d98a; }
+  .notif-prompt-skip {
+    display: block; width: 100%; text-align: center;
+    background: none; border: none; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: rgba(244,235,214,0.3);
+    padding: 8px 0;
+  }
 `;
