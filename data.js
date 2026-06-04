@@ -60,11 +60,16 @@ window.CHYAKO_DATA = {
     return slots;
   },
 
-  // Synthetic availability — some slots randomly "taken" for realism
-  isSlotTaken: function (dateStr, slot, barberId) {
-    // Deterministic pseudo-random based on inputs
-    const seed = (dateStr + slot + barberId).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-    return (seed * 9301 + 49297) % 233280 / 233280 < 0.35;
+  isSlotTaken: function (dateStr, slot, barberId, bookings) {
+    if (!bookings || bookings.length === 0) return false;
+    const active = bookings.filter(b =>
+      b.status !== "cancelled" && b.status !== "deleted" &&
+      b.dateIso === dateStr && b.slot === slot
+    );
+    if (barberId === "any") {
+      return this.barbers.every(b => active.some(bk => bk.barberId === b.id));
+    }
+    return active.some(b => b.barberId === barberId);
   },
 
   // ---- OWNER DEMO DATA -------------------------------------------------
@@ -147,7 +152,7 @@ window.CHYAKO_DATA = {
     const out = [];
     const today = new Date();
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 28; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
       out.push({

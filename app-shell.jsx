@@ -241,6 +241,7 @@ const AppShell = () => {
       {sheet?.type === "book" && (
         <window.BookSheet
           user={user}
+          bookings={bookings}
           onClose={() => setSheet(null)}
           onConfirm={(payload) => addBooking(payload)}
         />
@@ -257,6 +258,7 @@ const AppShell = () => {
       {sheet?.type === "reschedule" && manageBooking && (
         <window.RescheduleSheet
           booking={manageBooking}
+          bookings={bookings}
           onClose={() => setSheet({ type: "manage", id: manageBooking.id })}
           onSave={(id, dateIso, slot) => { rescheduleBooking(id, dateIso, slot); setSheet({ type: "manage", id }); }}
         />

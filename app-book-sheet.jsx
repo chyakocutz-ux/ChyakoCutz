@@ -1,7 +1,7 @@
 // BOOK SHEET — Service → Barber → Date+Time → Review → Confirmed
 // User is logged in so we pre-fill name/phone/email and skip the details step.
 
-const BookSheet = ({ user, onClose, onConfirm }) => {
+const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
   const D = window.CHYAKO_DATA;
   const [step, setStep] = React.useState(0);
   const [selectedServices, setSelectedServices] = React.useState([]);
@@ -151,7 +151,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
                     const dayObj = days.find(x => x.iso === selectedDate);
                     const slots = D.generateSlots(dayObj.dayIdx);
                     return slots.map(slot => {
-                      const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any");
+                      const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings);
                       return (
                         <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
                           {slot}
