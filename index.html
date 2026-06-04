@@ -29,28 +29,49 @@
     .boot {
       position: fixed; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 20px;
+      flex-direction: column;
       background: #000;
-      color: #e8c268;
+    }
+    .boot-logo {
+      width: 100px; height: 100px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      animation: boot-fade 0.7s ease both;
+    }
+    .boot-name {
       font-family: 'Pirata One', serif;
-      font-size: 48px;
-      letter-spacing: 0.05em;
+      font-size: 34px;
+      letter-spacing: 0.08em;
+      color: #e8c268;
+      animation: boot-fade 0.7s ease 0.1s both;
+    }
+    .boot-sub {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: rgba(232,194,104,0.45);
+      margin-top: 6px;
+      margin-bottom: 36px;
+      animation: boot-fade 0.7s ease 0.2s both;
     }
     .boot-spinner {
-      width: 36px; height: 36px;
-      border: 1px solid rgba(232, 194, 104, 0.2);
+      width: 26px; height: 26px;
+      border: 1.5px solid rgba(232, 194, 104, 0.15);
       border-top-color: #e8c268;
       border-radius: 50%;
-      animation: bspin 1s linear infinite;
+      animation: bspin 0.9s linear infinite;
     }
     @keyframes bspin { to { transform: rotate(360deg); } }
+    @keyframes boot-fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
   <div id="root">
     <div class="boot">
+      <img class="boot-logo" src="assets/logo.png" alt="Chyako Cutz"/>
+      <div class="boot-name">CHYAKO CUTZ</div>
+      <div class="boot-sub">SUTTON · SM1</div>
       <div class="boot-spinner"></div>
-      <div>CHYAKO//CUTZ</div>
     </div>
   </div>
 

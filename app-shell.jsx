@@ -97,8 +97,10 @@ const AppShell = () => {
   if (authLoading) {
     return (
       <div className="boot">
+        <img className="boot-logo" src="assets/logo.png" alt="Chyako Cutz"/>
+        <div className="boot-name">CHYAKO CUTZ</div>
+        <div className="boot-sub">SUTTON · SM1</div>
         <div className="boot-spinner"/>
-        <div>CHYAKO//CUTZ</div>
       </div>
     );
   }
