@@ -236,7 +236,7 @@ window.appStyles = `
   .auth-head {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 30px;
-    padding-top: 14px;
+    padding-top: max(14px, env(safe-area-inset-top));
   }
   .back-btn {
     width: 44px; height: 44px;
