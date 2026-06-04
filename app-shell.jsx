@@ -54,8 +54,7 @@ const AppShell = () => {
       query = window.fbDb.collection("bookings").orderBy("createdAt", "desc");
     } else {
       query = window.fbDb.collection("bookings")
-        .where("uid", "==", user.uid)
-        .orderBy("createdAt", "desc");
+        .where("uid", "==", user.uid);
     }
     const unsub = query.onSnapshot(
       (snap) => setBookings(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
@@ -84,6 +83,9 @@ const AppShell = () => {
 
   const cancelBooking = (id) =>
     window.fbDb.collection("bookings").doc(id).update({ status: "cancelled" });
+
+  const deleteBooking = (id) =>
+    window.fbDb.collection("bookings").doc(id).delete();
 
   const rescheduleBooking = (id, dateIso, slot) =>
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
@@ -132,6 +134,7 @@ const AppShell = () => {
     return <window.OwnerDashboard
       allBookings={bookings}
       onSetStatus={setBookingStatus}
+      onDelete={deleteBooking}
       onSignOut={signOut}
     />;
   }
@@ -233,6 +236,7 @@ const AppShell = () => {
           booking={manageBooking}
           onClose={() => setSheet(null)}
           onCancel={(id) => { cancelBooking(id); setSheet(null); }}
+          onDelete={(id) => { deleteBooking(id); setSheet(null); }}
           onReschedule={(id) => setSheet({ type: "reschedule", id })}
         />
       )}

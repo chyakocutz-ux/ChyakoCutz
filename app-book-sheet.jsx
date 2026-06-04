@@ -13,8 +13,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
 
   const stepLabels = ["SERVICE", "BARBER", "DATE + TIME", "REVIEW", "CONFIRMED"];
 
-  const RESERVATION_FEE = 5;
-  const totalPrice = selectedServices.reduce((s, id) => s + D.services.find(x => x.id === id).price, 0) * (friend ? 2 : 1);
+  const totalPrice =selectedServices.reduce((s, id) => s + D.services.find(x => x.id === id).price, 0) * (friend ? 2 : 1);
   const totalMins = selectedServices.reduce((s, id) => s + D.services.find(x => x.id === id).mins, 0);
   const dueAtChair = totalPrice;
 
@@ -37,7 +36,6 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
       slot: selectedSlot,
       friend,
       total: totalPrice,
-      reservationFee: RESERVATION_FEE,
       dueAtChair,
     };
     onConfirm(payload);
@@ -228,15 +226,10 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
                 <span className="review-val">SERVICE TOTAL</span>
                 <span className="review-label" style={{ color: 'rgba(244,235,214,0.55)' }}>£{totalPrice}</span>
               </div>
-              <div className="review-row pay-now-row">
-                <span className="review-val">RESERVATION · PAY NOW</span>
-                <span className="review-label" style={{ color: '#e8c268' }}>£{RESERVATION_FEE}</span>
-              </div>
               <div className="review-row">
                 <span className="review-val">DUE AT CHAIR</span>
                 <span className="review-label" style={{ color: 'rgba(244,235,214,0.55)' }}>£{dueAtChair}</span>
               </div>
-              <div className="pay-note">£5 HOLDS YOUR SLOT — NON-REFUNDABLE &amp; ON TOP OF YOUR CUT. FULL SERVICE PRICE STILL DUE AT THE CHAIR.</div>
             </div>
           </div>
         )}
@@ -270,7 +263,6 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
               })}
               {friend && <div className="ticket-row"><span>+ FRIEND</span><span>×2</span></div>}
               <div className="ticket-divider"/>
-              <div className="ticket-row"><span>RESERVATION PAID</span><span>£{RESERVATION_FEE}</span></div>
               <div className="ticket-total"><span>DUE AT CHAIR</span><span>£{dueAtChair}</span></div>
             </div>
 
@@ -288,11 +280,11 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
         <div className="sheet-foot">
           <div className="sheet-summary">
             <div>
-              <div className="summary-label">{step === 3 ? "RESERVATION · DUE NOW" : `${selectedServices.length} SVC · ${totalMins}MIN${friend ? " · ×2" : ""}`}</div>
-              <div className="summary-total">£{step === 3 ? RESERVATION_FEE : totalPrice}</div>
+              <div className="summary-label">{`${selectedServices.length} SVC · ${totalMins}MIN${friend ? " · ×2" : ""}`}</div>
+              <div className="summary-total">£{totalPrice}</div>
             </div>
             <button className="sheet-cta" disabled={!canAdvance()} onClick={() => step === 3 ? handleConfirm() : setStep(step + 1)}>
-              <span>{step === 3 ? "PAY £5 · LOCK IN" : "NEXT"}</span>
+              <span>{step === 3 ? "LOCK IN" : "NEXT"}</span>
               <div className="btn-arrow">
                 <svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 12L12 2M5 2h7v7" stroke="currentColor" strokeWidth="1.8" fill="none"/></svg>
               </div>

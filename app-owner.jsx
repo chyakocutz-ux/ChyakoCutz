@@ -1,7 +1,7 @@
 // OWNER DASHBOARD — master view of every booking + workload management.
 // Two segments: SCHEDULE (day-by-day agenda) and ALL BOOKINGS (full upcoming list).
 
-const OwnerDashboard = ({ allBookings, onSetStatus, onSignOut }) => {
+const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
   const D = window.CHYAKO_DATA;
   const days = React.useMemo(() => D.next14Days(), []);
   const [seg, setSeg] = React.useState("schedule"); // schedule | all
@@ -24,7 +24,6 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onSignOut }) => {
     .sort((a, b) => dt(a) - dt(b));
 
   const dayActive = allBookings.filter(b => b.dateIso === selectedIso && b.status !== "cancelled");
-  const resTaken = dayActive.length * 5;
   const chairValue = dayActive.reduce((s, b) => s + (b.dueAtChair ?? b.total ?? 0), 0);
 
   // ---- barber chip counts (selected day) ----
@@ -75,6 +74,9 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onSignOut }) => {
           ) : (
             <div className="oappt-actions">
               <button className="oact reopen" onClick={() => onSetStatus(b.id, "confirmed")}>↺ REOPEN</button>
+              {b.status === "cancelled" && (
+                <button className="oact cancel" onClick={() => onDelete(b.id)}>✕ DELETE</button>
+              )}
             </div>
           )}
         </div>
@@ -128,10 +130,6 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onSignOut }) => {
               <div className="ostat">
                 <div className="ostat-num">{dayActive.length}</div>
                 <div className="ostat-label">CHAIRS BOOKED</div>
-              </div>
-              <div className="ostat">
-                <div className="ostat-num">£{resTaken}</div>
-                <div className="ostat-label">RES. TAKEN</div>
               </div>
               <div className="ostat">
                 <div className="ostat-num">£{chairValue}</div>

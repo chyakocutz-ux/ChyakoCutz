@@ -85,13 +85,12 @@ const BookingsTab = ({ bookings, onBook, onManage }) => {
 };
 
 // ============ MANAGE SHEET ============
-const ManageSheet = ({ booking, onClose, onCancel, onReschedule }) => {
+const ManageSheet = ({ booking, onClose, onCancel, onDelete, onReschedule }) => {
   const D = window.CHYAKO_DATA;
   const [confirmCancel, setConfirmCancel] = React.useState(false);
   const barber = booking.barberId === "any" ? "ANYONE" : D.barbers.find(b => b.id === booking.barberId);
   const svcs = booking.services.map(id => D.services.find(s => s.id === id)).filter(Boolean);
   const total = svcs.reduce((s, x) => s + x.price, 0) * (booking.friend ? 2 : 1);
-  const reservationFee = booking.reservationFee ?? 5;
   const dueAtChair = total;
   const isUp = window.isUpcoming(booking);
   const ticketNum = booking.id.slice(-4).toUpperCase();
@@ -125,7 +124,6 @@ const ManageSheet = ({ booking, onClose, onCancel, onReschedule }) => {
           ))}
           {booking.friend && <div className="ticket-row"><span>+ FRIEND</span><span>×2</span></div>}
           <div className="ticket-divider"/>
-          <div className="ticket-row"><span>RESERVATION PAID</span><span>£{reservationFee}</span></div>
           <div className="ticket-total"><span>DUE AT CHAIR</span><span>£{dueAtChair}</span></div>
         </div>
 
@@ -174,6 +172,13 @@ const ManageSheet = ({ booking, onClose, onCancel, onReschedule }) => {
         {booking.status === "cancelled" && (
           <div className="manage-cancelled-note">
             ✕ THIS BOOKING WAS CANCELLED.
+          </div>
+        )}
+        {booking.status === "cancelled" && (
+          <div className="manage-actions">
+            <button className="btn btn-danger" onClick={() => onDelete(booking.id)}>
+              <span>DELETE BOOKING</span>
+            </button>
           </div>
         )}
       </div>
