@@ -366,7 +366,7 @@ window.appStyles = `
   /* Top bar */
   .topbar {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 22px 14px;
+    padding: max(16px, env(safe-area-inset-top)) 22px 14px;
     background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, transparent 100%);
     z-index: 5;
   }

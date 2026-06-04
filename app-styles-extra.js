@@ -342,7 +342,7 @@ window.appStylesExtra = `
   }
   .owner-topbar {
     display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 12px 22px 14px;
+    padding: max(12px, env(safe-area-inset-top)) 22px 14px;
     border-bottom: 1px solid rgba(232, 194, 104, 0.18);
   }
   .owner-eyebrow {
