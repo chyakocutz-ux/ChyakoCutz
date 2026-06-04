@@ -101,7 +101,7 @@ const AppShell = () => {
   // Silently refresh FCM token if permission already granted
   React.useEffect(() => {
     if (!user?.uid || !window.fbMessaging) return;
-    if (Notification?.permission !== "granted") return;
+    if (window.Notification?.permission !== "granted") return;
     window.fbMessaging.getToken({ vapidKey: window.CHYAKO_VAPID_KEY })
       .then(token => {
         if (!token) return;
@@ -116,7 +116,7 @@ const AppShell = () => {
   React.useEffect(() => {
     if (!user?.uid || user.role !== "owner") return;
     if (localStorage.getItem("notif_asked")) return;
-    if (Notification?.permission !== "default") return;
+    if (window.Notification?.permission !== "default") return;
     const t = setTimeout(() => setShowNotifPrompt(true), 1400);
     return () => clearTimeout(t);
   }, [user?.uid, user?.role]);
@@ -165,7 +165,7 @@ const AppShell = () => {
       read: false
     }).catch(() => {});
     // Queue the notification permission prompt after this first booking
-    if (Notification?.permission === "default" && !localStorage.getItem("notif_asked")) {
+    if (window.Notification?.permission === "default" && !localStorage.getItem("notif_asked")) {
       notifPromptPending.current = true;
     }
     return ref.id;
