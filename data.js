@@ -4,7 +4,7 @@ window.CHYAKO_DATA = {
     name: "Chyako Cutz",
     tagline: "Quality Hairstyles",
     since: "Since 2023",
-    phone: "07888 658011",
+    phone: "+44 7888 658011",
     address: "Railway Bridge, High St, Sutton SM1 1JA",
     locality: "Sutton, London",
     logo: "assets/logo.png",

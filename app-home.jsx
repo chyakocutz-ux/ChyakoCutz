@@ -145,7 +145,7 @@ const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
         </div>
         <div className="info-block">
           <div className="info-eyebrow">CALL</div>
-          <div className="info-val">07888<br/>658 011</div>
+          <div className="info-val">+44 7888<br/>658 011</div>
         </div>
       </div>
 

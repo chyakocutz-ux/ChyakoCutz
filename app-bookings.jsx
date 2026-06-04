@@ -135,7 +135,7 @@ const ManageSheet = ({ booking, onClose, onCancel, onDelete, onReschedule }) => 
           </div>
           <div className="manage-info-row">
             <span className="manage-info-label">CALL SHOP</span>
-            <a className="manage-info-val link" href="tel:07888658011">07888 658 011</a>
+            <a className="manage-info-val link" href="tel:+447888658011">+44 7888 658 011</a>
           </div>
           <div className="manage-info-row">
             <span className="manage-info-label">BOOKED</span>
