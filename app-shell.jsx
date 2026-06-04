@@ -57,7 +57,7 @@ const AppShell = () => {
         .where("uid", "==", user.uid);
     }
     const unsub = query.onSnapshot(
-      (snap) => setBookings(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      (snap) => setBookings(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "deleted")),
       () => {} // ignore listener errors silently
     );
     return unsub;
@@ -85,7 +85,7 @@ const AppShell = () => {
     window.fbDb.collection("bookings").doc(id).update({ status: "cancelled" });
 
   const deleteBooking = (id) =>
-    window.fbDb.collection("bookings").doc(id).delete();
+    window.fbDb.collection("bookings").doc(id).update({ status: "deleted" });
 
   const rescheduleBooking = (id, dateIso, slot) =>
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
