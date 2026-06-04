@@ -86,8 +86,6 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
 
   return (
     <div className="owner">
-      <window.StatusBar/>
-
       {/* TOPBAR */}
       <div className="owner-topbar">
         <div>
