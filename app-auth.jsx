@@ -18,9 +18,9 @@ const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
   const D = window.CHYAKO_DATA;
   const now = new Date();
   const dayIdx = (now.getDay() + 6) % 7;
-  const hoursRow = D.hours[dayIdx];
-  const [oh] = hoursRow.open.split(":").map(Number);
-  const [ch] = hoursRow.close.split(":").map(Number);
+  const hoursRow = D?.hours?.[dayIdx];
+  const [oh] = (hoursRow?.open || "09:00").split(":").map(Number);
+  const [ch] = (hoursRow?.close || "19:00").split(":").map(Number);
   const isOpen = now.getHours() >= oh && now.getHours() < ch;
 
   return (
