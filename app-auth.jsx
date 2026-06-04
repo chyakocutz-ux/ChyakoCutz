@@ -15,6 +15,14 @@ const StatusBar = () => (
 
 // ------- WELCOME -------
 const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
+  const D = window.CHYAKO_DATA;
+  const now = new Date();
+  const dayIdx = (now.getDay() + 6) % 7;
+  const hoursRow = D.hours[dayIdx];
+  const [oh] = hoursRow.open.split(":").map(Number);
+  const [ch] = hoursRow.close.split(":").map(Number);
+  const isOpen = now.getHours() >= oh && now.getHours() < ch;
+
   return (
     <div className="screen">
       <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
@@ -24,8 +32,8 @@ const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
         <div>
           <div className="welcome-top" style={{ marginTop: 14, padding: '0 0' }}>
             <div className="welcome-badge">
-              <span className="welcome-badge-dot"/>
-              OPEN NOW
+              <span className="welcome-badge-dot" style={!isOpen ? { background: 'rgba(244,235,214,0.3)', animationName: 'none' } : {}}/>
+              {isOpen ? "OPEN NOW" : "CLOSED"}
             </div>
             <div className="welcome-loc">SUTTON · UK</div>
           </div>
@@ -108,7 +116,7 @@ const SignUpScreen = ({ onBack, onSwitchToSignIn }) => {
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
           <div className="auth-mark">CHYAKO//CUTZ</div>
-          <div style={{ width: 38 }}/>
+          <div style={{ width: 44 }}/>
         </div>
 
         <h1 className="auth-title">CREATE<br/><span>ACCOUNT.</span></h1>
@@ -149,7 +157,7 @@ const SignUpScreen = ({ onBack, onSwitchToSignIn }) => {
 
         <div className="auth-foot">
           Got a chair already?
-          <a onClick={onSwitchToSignIn}>Sign in</a>
+          <button type="button" className="auth-foot-link" onClick={onSwitchToSignIn}>Sign in</button>
         </div>
       </div>
     </div>
@@ -205,7 +213,7 @@ const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
           <div className="auth-mark">CHYAKO//CUTZ</div>
-          <div style={{ width: 38 }}/>
+          <div style={{ width: 44 }}/>
         </div>
 
         <h1 className="auth-title">WELCOME<br/><span>BACK.</span></h1>
@@ -234,7 +242,7 @@ const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
 
         <div className="auth-foot">
           New to the chair?
-          <a onClick={onSwitchToSignUp}>Create account</a>
+          <button type="button" className="auth-foot-link" onClick={onSwitchToSignUp}>Create account</button>
         </div>
       </div>
     </div>
@@ -287,7 +295,7 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
           <div className="auth-mark">CHYAKO//CUTZ</div>
-          <div style={{ width: 38 }}/>
+          <div style={{ width: 44 }}/>
         </div>
 
         <div className="owner-crest">⚿</div>

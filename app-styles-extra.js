@@ -38,17 +38,17 @@ window.appStylesExtra = `
 
   /* ============ BOTTOM NAV — center BOOK button ============ */
   .bnav-book {
-    color: #e8c268 !important;
+    color: var(--gold) !important;
     gap: 6px;
   }
   .bnav-book-pill {
     width: 44px; height: 44px;
-    background: #e8c268;
-    color: #000;
+    background: var(--gold);
+    color: var(--ink);
     display: flex; align-items: center; justify-content: center;
     transform: translateY(-12px);
     box-shadow:
-      0 0 0 4px #000,
+      0 0 0 4px var(--ink),
       0 0 18px rgba(232,194,104,0.45);
   }
   .bnav-book .bnav-item-icon { display: none; }
@@ -60,17 +60,17 @@ window.appStylesExtra = `
   .hero-cta {
     width: 100%;
     padding: 18px 20px !important;
-    font-size: 14px !important;
+    font-size: 0.875rem !important;
   }
   .svc-line-more {
     background: transparent;
     border: 1px dashed rgba(232, 194, 104, 0.35);
-    color: #e8c268;
+    color: var(--gold);
     width: 100%;
     padding: 14px;
     margin-top: 14px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.2em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.2em; font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
   }
@@ -78,7 +78,7 @@ window.appStylesExtra = `
     text-align: center;
     margin: 36px 0 24px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(244, 235, 214, 0.3);
   }
 
@@ -94,7 +94,7 @@ window.appStylesExtra = `
     color: rgba(244, 235, 214, 0.55);
     padding: 10px 6px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.18em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.18em; font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -102,15 +102,15 @@ window.appStylesExtra = `
   .bk-tab span {
     color: rgba(232, 194, 104, 0.5);
     font-family: 'Pirata One', serif;
-    font-size: 14px;
+    font-size: 0.875rem;
     letter-spacing: 0;
   }
   .bk-tab.active {
     background: rgba(232, 194, 104, 0.12);
-    border-color: #e8c268;
-    color: #e8c268;
+    border-color: var(--gold);
+    color: var(--gold);
   }
-  .bk-tab.active span { color: #e8c268; }
+  .bk-tab.active span { color: var(--gold); }
 
   .booking-card {
     text-align: left;
@@ -118,11 +118,11 @@ window.appStylesExtra = `
     width: 100%;
     color: var(--cream);
   }
-  .booking-card:hover { border-color: #e8c268; }
+  .booking-card:hover { border-color: var(--gold); }
   .booking-card.cancelled { opacity: 0.55; }
   .booking-card-barber {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.15em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.15em; font-weight: 600;
     color: rgba(232, 194, 104, 0.7);
     margin-top: 6px;
     text-transform: uppercase;
@@ -149,18 +149,18 @@ window.appStylesExtra = `
   .manage-info-row:last-child { border-bottom: none; }
   .manage-info-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
   }
   .manage-info-val {
     font-family: 'Pirata One', serif;
-    font-size: 16px; line-height: 1.25;
+    font-size: 1rem; line-height: 1.25;
     color: var(--cream);
     letter-spacing: 0.02em;
     text-align: right;
     text-decoration: none;
   }
-  .manage-info-val.link { color: #e8c268; }
+  .manage-info-val.link { color: var(--gold); }
 
   .manage-actions {
     display: flex; gap: 8px;
@@ -169,12 +169,13 @@ window.appStylesExtra = `
   .manage-actions .btn {
     flex: 1;
     padding: 14px 12px;
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .btn-danger {
     background: transparent;
     border: 1px solid rgba(232, 93, 62, 0.5);
     color: var(--red);
+    border-radius: 0;
   }
   .btn-danger:hover { border-color: var(--red); background: rgba(232, 93, 62, 0.08); }
 
@@ -185,7 +186,7 @@ window.appStylesExtra = `
   }
   .manage-confirm-title {
     font-family: 'Pirata One', serif;
-    font-size: 22px; color: var(--red);
+    font-size: 1.375rem; color: var(--red);
     text-align: center;
     margin-bottom: 4px;
     letter-spacing: 0.02em;
@@ -193,7 +194,7 @@ window.appStylesExtra = `
   .manage-confirm-sub {
     text-align: center;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: rgba(244, 235, 214, 0.55);
     margin-bottom: 14px;
   }
@@ -203,7 +204,7 @@ window.appStylesExtra = `
     border: 1px dashed rgba(232, 93, 62, 0.4);
     text-align: center;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: var(--red);
   }
 
@@ -216,7 +217,7 @@ window.appStylesExtra = `
   }
   .review-block-head {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     padding-bottom: 6px;
     border-bottom: 1px dashed rgba(232, 194, 104, 0.15);
@@ -228,21 +229,27 @@ window.appStylesExtra = `
   }
   .review-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(244, 235, 214, 0.5);
     flex-shrink: 0;
   }
   .review-val {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; letter-spacing: 0.04em; font-weight: 600;
+    font-size: 0.8125rem; letter-spacing: 0.04em; font-weight: 600;
     color: var(--cream);
     text-align: right;
     text-transform: uppercase;
   }
+  .review-hint {
+    margin: 4px 0 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.6875rem; color: rgba(244, 235, 214, 0.35);
+    text-align: center; letter-spacing: 0.04em;
+  }
 
   /* ============ PAYMENT / RESERVATION FEE ============ */
   .pay-block .review-val { text-align: left; }
-  .pay-block .review-label { font-size: 13px; }
+  .pay-block .review-label { font-size: 0.8125rem; }
   .pay-now-row {
     margin: 2px -8px;
     padding: 8px;
@@ -250,7 +257,7 @@ window.appStylesExtra = `
     border: 1px solid rgba(232, 194, 104, 0.25);
   }
   .pay-now-row .review-val { color: var(--gold); letter-spacing: 0.06em; }
-  .pay-now-row .review-label { font-family: 'Pirata One', serif; font-size: 18px; letter-spacing: 0; }
+  .pay-now-row .review-label { font-family: 'Pirata One', serif; font-size: 1.125rem; letter-spacing: 0; }
   .pay-note {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 8.5px; letter-spacing: 0.16em; font-weight: 600;
@@ -270,7 +277,7 @@ window.appStylesExtra = `
   /* ============ ACCOUNT TAB ============ */
   .acct-section-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     margin: 20px 0 8px;
     padding-left: 4px;
@@ -283,14 +290,14 @@ window.appStylesExtra = `
     text-align: center;
     margin: 32px 0 24px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(244, 235, 214, 0.3);
     line-height: 2;
   }
 
   /* Welcome brand fits 390px better */
   @media (max-width: 420px) {
-    .welcome-brand { font-size: 78px; }
+    .welcome-brand { font-size: 4.875rem; }
   }
 
   /* ============ OWNER ACCESS LINK (welcome) ============ */
@@ -299,7 +306,7 @@ window.appStylesExtra = `
     margin-top: 14px;
     background: transparent; border: none;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.32em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.32em; font-weight: 700;
     color: rgba(244, 235, 214, 0.4);
     cursor: pointer; text-align: center;
     transition: color 0.15s;
@@ -314,14 +321,14 @@ window.appStylesExtra = `
       var(--ink);
   }
   .owner-crest {
-    font-size: 40px; color: var(--gold);
+    font-size: 2.5rem; color: var(--gold);
     margin: 8px 0 14px;
     line-height: 1;
   }
   .owner-hint {
     margin-top: 22px; text-align: center;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.28em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.28em; font-weight: 700;
     color: rgba(244, 235, 214, 0.35);
   }
   .owner-hint strong { color: var(--gold); letter-spacing: 0.1em; }
@@ -340,20 +347,20 @@ window.appStylesExtra = `
   }
   .owner-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold);
     margin-bottom: 7px;
     display: flex; align-items: center; gap: 5px;
   }
-  .owner-key { font-size: 12px; }
+  .owner-key { font-size: 0.75rem; }
   .owner-brand {
     font-family: 'Pirata One', serif;
-    font-size: 30px; color: var(--cream);
+    font-size: 1.875rem; color: var(--cream);
     line-height: 1; letter-spacing: 0.01em;
   }
   .owner-brand span {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.18em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.18em; font-weight: 700;
     color: rgba(244, 235, 214, 0.45);
     margin-left: 8px;
   }
@@ -376,7 +383,7 @@ window.appStylesExtra = `
     flex: 1; background: transparent; border: none;
     padding: 12px 8px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.22em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.22em; font-weight: 700;
     color: rgba(244, 235, 214, 0.5);
     cursor: pointer; text-transform: uppercase;
     transition: all 0.15s;
@@ -408,12 +415,12 @@ window.appStylesExtra = `
   }
   .oday-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.14em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 700;
     color: rgba(244, 235, 214, 0.55);
   }
   .oday-num {
     font-family: 'Pirata One', serif;
-    font-size: 22px; line-height: 1; color: var(--cream);
+    font-size: 1.375rem; line-height: 1; color: var(--cream);
   }
   .oday.on { background: var(--gold); border-color: var(--gold); }
   .oday.on .oday-name { color: rgba(0,0,0,0.6); }
@@ -424,7 +431,7 @@ window.appStylesExtra = `
     background: var(--gold); color: var(--ink);
     border: 1px solid var(--ink);
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; font-weight: 700;
+    font-size: 0.6875rem; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     border-radius: 9px;
   }
@@ -443,7 +450,7 @@ window.appStylesExtra = `
   }
   .ostat-num {
     font-family: 'Pirata One', serif;
-    font-size: 28px; line-height: 1; color: var(--gold);
+    font-size: 1.75rem; line-height: 1; color: var(--gold);
   }
   .ostat-label {
     font-family: 'Space Grotesk', sans-serif;
@@ -466,14 +473,14 @@ window.appStylesExtra = `
     color: rgba(244, 235, 214, 0.7);
     padding: 8px 12px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.14em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 700;
     cursor: pointer; white-space: nowrap;
     display: flex; align-items: center; gap: 7px;
     text-transform: uppercase;
   }
   .obarber.on { background: var(--gold); border-color: var(--gold); color: var(--ink); }
   .obarber-c {
-    font-family: 'Pirata One', serif; font-size: 13px;
+    font-family: 'Pirata One', serif; font-size: 0.8125rem;
     color: var(--gold); line-height: 1;
   }
   .obarber.on .obarber-c { color: var(--ink); }
@@ -481,7 +488,7 @@ window.appStylesExtra = `
   /* section labels */
   .oagenda-head, .oall-head {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.28em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.28em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     margin: 4px 0 12px;
   }
@@ -491,11 +498,11 @@ window.appStylesExtra = `
     padding-bottom: 8px; margin-bottom: 12px;
     border-bottom: 1px dashed rgba(232, 194, 104, 0.2);
     font-family: 'Pirata One', serif;
-    font-size: 18px; color: var(--cream); letter-spacing: 0.02em;
+    font-size: 1.125rem; color: var(--cream); letter-spacing: 0.02em;
   }
   .ogroup-count {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.1em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.1em; font-weight: 700;
     color: var(--gold);
     border: 1px solid rgba(232, 194, 104, 0.35);
     padding: 3px 9px;
@@ -520,14 +527,14 @@ window.appStylesExtra = `
   }
   .oappt-time-h {
     font-family: 'Pirata One', serif;
-    font-size: 23px; line-height: 0.95; color: var(--gold);
+    font-size: 1.438rem; line-height: 0.95; color: var(--gold);
   }
   .oappt.done .oappt-time-h { color: #7fae5f; }
   .oappt.noshow .oappt-time-h { color: var(--red); }
   .oappt.cancelled .oappt-time-h { color: rgba(244,235,214,0.4); }
   .oappt-dur {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.12em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.12em; font-weight: 700;
     color: rgba(244, 235, 214, 0.4);
   }
   .oappt-main { flex: 1; min-width: 0; }
@@ -537,14 +544,14 @@ window.appStylesExtra = `
   }
   .oappt-cust {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; letter-spacing: 0.03em; font-weight: 700;
+    font-size: 0.8125rem; letter-spacing: 0.03em; font-weight: 700;
     color: var(--cream);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .ostatus {
     flex-shrink: 0;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.16em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.16em; font-weight: 700;
     padding: 3px 7px;
     border: 1px solid var(--gold); color: var(--gold);
   }
@@ -553,7 +560,7 @@ window.appStylesExtra = `
   .ostatus.cancelled { border-color: rgba(244,235,214,0.3); color: rgba(244,235,214,0.45); }
   .oappt-svc {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.05em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.05em; font-weight: 600;
     color: rgba(244, 235, 214, 0.75);
     line-height: 1.45; margin-bottom: 8px;
   }
@@ -564,7 +571,7 @@ window.appStylesExtra = `
   .oappt-barber {
     display: flex; align-items: center; gap: 6px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.1em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.1em; font-weight: 700;
     color: rgba(244, 235, 214, 0.6);
   }
   .oappt-init {
@@ -572,11 +579,11 @@ window.appStylesExtra = `
     border: 1px solid rgba(232, 194, 104, 0.4);
     color: var(--gold);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Pirata One', serif; font-size: 11px;
+    font-family: 'Pirata One', serif; font-size: 0.6875rem;
   }
   .oappt-phone {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.06em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.06em; font-weight: 600;
     color: rgba(232, 194, 104, 0.7);
     text-decoration: none;
   }
@@ -584,7 +591,7 @@ window.appStylesExtra = `
   .oappt-price {
     margin-left: auto;
     font-family: 'Pirata One', serif;
-    font-size: 16px; color: var(--cream);
+    font-size: 1rem; color: var(--cream);
   }
   .oappt-actions { display: flex; gap: 6px; }
   .oact {
@@ -594,7 +601,7 @@ window.appStylesExtra = `
     color: rgba(244, 235, 214, 0.8);
     padding: 8px 4px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.1em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.1em; font-weight: 700;
     cursor: pointer; text-transform: uppercase;
     transition: all 0.13s;
   }
@@ -612,15 +619,15 @@ window.appStylesExtra = `
     text-align: center; padding: 50px 20px;
     border: 1px dashed rgba(232, 194, 104, 0.2);
   }
-  .oempty-mark { font-size: 34px; color: rgba(232, 194, 104, 0.5); }
+  .oempty-mark { font-size: 2.125rem; color: rgba(232, 194, 104, 0.5); }
   .oempty-title {
     font-family: 'Pirata One', serif;
-    font-size: 22px; color: var(--cream);
+    font-size: 1.375rem; color: var(--cream);
     margin: 12px 0 6px;
   }
   .oempty-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.04em;
+    font-size: 0.6875rem; letter-spacing: 0.04em;
     color: rgba(244, 235, 214, 0.45);
     line-height: 1.5;
   }

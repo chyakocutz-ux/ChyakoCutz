@@ -90,7 +90,7 @@ window.appStyles = `
   .statusbar {
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 22px 0;
-    font-size: 13px; font-weight: 700;
+    font-size: 0.8125rem; font-weight: 700;
     color: var(--cream);
     z-index: 10;
   }
@@ -127,7 +127,7 @@ window.appStyles = `
     padding: 6px 10px;
     border: 1px solid rgba(232, 194, 104, 0.5);
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold);
   }
   .welcome-badge-dot {
@@ -138,7 +138,7 @@ window.appStyles = `
   @keyframes pulse { 50% { opacity: 0.4; } }
   .welcome-loc {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(244, 235, 214, 0.6);
     text-align: right;
   }
@@ -148,13 +148,13 @@ window.appStyles = `
   }
   .welcome-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.4em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.4em; font-weight: 700;
     color: var(--gold);
     margin-bottom: 16px;
   }
   .welcome-brand {
     font-family: 'Pirata One', serif;
-    font-size: 92px; line-height: 0.88;
+    font-size: 5.75rem; line-height: 0.88;
     color: var(--cream);
     letter-spacing: 0.01em;
     margin: 0;
@@ -168,7 +168,7 @@ window.appStyles = `
   }
   .welcome-tag {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; letter-spacing: 0.05em;
+    font-size: 0.8125rem; letter-spacing: 0.05em;
     color: rgba(244, 235, 214, 0.7);
     margin: 22px auto 0;
     max-width: 280px;
@@ -184,7 +184,7 @@ window.appStyles = `
     padding: 16px 20px;
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
-    font-size: 13px; letter-spacing: 0.18em;
+    font-size: 0.8125rem; letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
     border: none;
@@ -192,6 +192,7 @@ window.appStyles = `
   }
   .btn-primary {
     background: var(--gold); color: var(--ink);
+    border-radius: 100px;
   }
   .btn-primary:hover { background: var(--gold-bright); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -199,6 +200,7 @@ window.appStyles = `
     background: transparent;
     color: var(--cream);
     border: 1px solid rgba(244, 235, 214, 0.35);
+    border-radius: 100px;
   }
   .btn-outline:hover { border-color: var(--cream); }
   .btn-arrow {
@@ -214,7 +216,7 @@ window.appStyles = `
     text-align: center;
     margin-top: 16px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.18em;
+    font-size: 0.6875rem; letter-spacing: 0.18em;
     color: rgba(244, 235, 214, 0.4);
     text-transform: uppercase;
   }
@@ -237,7 +239,7 @@ window.appStyles = `
     padding-top: 14px;
   }
   .back-btn {
-    width: 38px; height: 38px;
+    width: 44px; height: 44px;
     background: transparent;
     border: 1px solid rgba(244, 235, 214, 0.25);
     color: var(--cream);
@@ -246,12 +248,12 @@ window.appStyles = `
   }
   .auth-mark {
     font-family: 'Pirata One', serif;
-    font-size: 22px; color: var(--gold);
+    font-size: 1.375rem; color: var(--gold);
     letter-spacing: 0.02em;
   }
   .auth-title {
     font-family: 'Pirata One', serif;
-    font-size: 52px; line-height: 0.9;
+    font-size: 3.25rem; line-height: 0.9;
     color: var(--cream);
     margin: 0 0 6px;
     letter-spacing: 0.01em;
@@ -259,7 +261,7 @@ window.appStyles = `
   .auth-title span { color: var(--gold); }
   .auth-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: rgba(244, 235, 214, 0.55);
     margin: 0 0 28px;
     line-height: 1.5;
@@ -272,7 +274,7 @@ window.appStyles = `
   }
   .field-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: var(--gold);
     text-transform: uppercase;
   }
@@ -284,7 +286,7 @@ window.appStyles = `
     color: var(--cream);
     padding: 6px 0 12px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px; font-weight: 500;
+    font-size: 1.125rem; font-weight: 500;
     outline: none;
     border-radius: 0;
     transition: border-color 0.15s;
@@ -296,7 +298,7 @@ window.appStyles = `
   }
   .field-error {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; color: var(--red);
+    font-size: 0.6875rem; color: var(--red);
     letter-spacing: 0.1em; font-weight: 600;
     margin-top: 2px;
   }
@@ -307,10 +309,14 @@ window.appStyles = `
     text-align: center;
     margin-top: 24px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: rgba(244, 235, 214, 0.55);
   }
-  .auth-foot a {
+  .auth-foot-link {
+    background: none; border: none; padding: 0;
+    font-family: inherit; font-size: inherit;
+  }
+  .auth-foot a, .auth-foot-link {
     color: var(--gold);
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -328,7 +334,7 @@ window.appStyles = `
   }
   .auth-divider-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.6);
   }
   .social-btn {
@@ -338,7 +344,7 @@ window.appStyles = `
     padding: 14px;
     display: flex; align-items: center; justify-content: center; gap: 10px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px; letter-spacing: 0.15em; font-weight: 700;
+    font-size: 0.75rem; letter-spacing: 0.15em; font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
   }
@@ -353,7 +359,7 @@ window.appStyles = `
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 80px;
+    padding-bottom: max(80px, calc(60px + env(safe-area-inset-bottom)));
   }
   .app-body::-webkit-scrollbar { width: 0; }
 
@@ -369,12 +375,12 @@ window.appStyles = `
   }
   .topbar-brand {
     font-family: 'Pirata One', serif;
-    font-size: 26px; color: var(--gold);
+    font-size: 1.625rem; color: var(--gold);
     line-height: 1;
   }
   .topbar-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(244, 235, 214, 0.55);
     margin-top: 3px;
   }
@@ -385,7 +391,7 @@ window.appStyles = `
     color: var(--gold);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Pirata One', serif;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
   }
 
@@ -396,13 +402,13 @@ window.appStyles = `
   }
   .hero-greet {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold);
     margin-bottom: 8px;
   }
   .hero-title {
     font-family: 'Pirata One', serif;
-    font-size: 48px; line-height: 0.92;
+    font-size: 3rem; line-height: 0.92;
     color: var(--cream);
     margin: 0 0 4px;
     letter-spacing: 0.01em;
@@ -420,12 +426,12 @@ window.appStyles = `
   }
   .hero-meta-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
   }
   .hero-meta-val {
     font-family: 'Pirata One', serif;
-    font-size: 18px; color: var(--cream);
+    font-size: 1.125rem; color: var(--cream);
     margin-top: 4px;
     letter-spacing: 0.02em;
   }
@@ -442,7 +448,7 @@ window.appStyles = `
   }
   .upcoming-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold);
     display: flex; align-items: center; gap: 6px;
   }
@@ -457,18 +463,18 @@ window.appStyles = `
   }
   .upcoming-when-day {
     font-family: 'Pirata One', serif;
-    font-size: 22px; color: var(--cream);
+    font-size: 1.375rem; color: var(--cream);
     line-height: 1; letter-spacing: 0.02em;
   }
   .upcoming-when-time {
     font-family: 'Pirata One', serif;
-    font-size: 38px; color: var(--gold);
+    font-size: 2.375rem; color: var(--gold);
     line-height: 1; margin-top: 4px;
   }
   .upcoming-svc {
     text-align: right;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; color: rgba(244, 235, 214, 0.65);
+    font-size: 0.6875rem; color: rgba(244, 235, 214, 0.65);
     text-transform: uppercase; letter-spacing: 0.12em;
     line-height: 1.5;
   }
@@ -485,13 +491,14 @@ window.appStyles = `
     background: transparent;
     border: 1px solid rgba(244, 235, 214, 0.25);
     color: var(--cream);
-    padding: 10px;
+    min-height: 44px;
+    padding: 12px 10px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.18em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.18em; font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
   }
-  .upcoming-btn.danger { color: var(--red); border-color: rgba(232, 93, 62, 0.4); }
+  .upcoming-btn.danger { color: var(--red); border-color: rgba(232, 93, 62, 0.4); border-radius: 0; }
 
   /* Section header */
   .sec-head {
@@ -501,17 +508,17 @@ window.appStyles = `
   }
   .sec-num {
     font-family: 'Pirata One', serif;
-    font-size: 26px; color: var(--gold);
+    font-size: 1.625rem; color: var(--gold);
     line-height: 1;
   }
   .sec-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
   }
   .sec-title {
     font-family: 'Pirata One', serif;
-    font-size: 30px; line-height: 1;
+    font-size: 1.875rem; line-height: 1;
     color: var(--cream); margin: 4px 0 0;
     letter-spacing: 0.01em;
   }
@@ -542,36 +549,36 @@ window.appStyles = `
   }
   .svc-tile-num {
     font-family: 'Pirata One', serif;
-    font-size: 16px;
+    font-size: 1rem;
     color: var(--gold); opacity: 0.7;
   }
   .svc-tile.feature .svc-tile-num { color: var(--ink); opacity: 0.6; }
   .svc-tile-name {
     font-family: 'Pirata One', serif;
-    font-size: 17px;
+    font-size: 1.062rem;
     line-height: 1.1;
     margin: 10px 0;
   }
-  .svc-tile.feature .svc-tile-name { font-size: 22px; }
+  .svc-tile.feature .svc-tile-name { font-size: 1.375rem; }
   .svc-tile-row {
     display: flex; justify-content: space-between; align-items: baseline;
   }
   .svc-tile-price {
     font-family: 'Pirata One', serif;
-    font-size: 24px;
+    font-size: 1.5rem;
     color: var(--gold);
   }
   .svc-tile.feature .svc-tile-price { color: var(--ink); }
   .svc-tile-mins {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.15em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.15em; font-weight: 600;
     color: rgba(244, 235, 214, 0.5);
   }
   .svc-tile.feature .svc-tile-mins { color: rgba(13, 12, 10, 0.7); }
   .svc-tile-tag {
     position: absolute; top: 10px; right: 10px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.18em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.18em; font-weight: 700;
     color: var(--ink);
     background: var(--cream);
     padding: 3px 6px;
@@ -585,17 +592,20 @@ window.appStyles = `
     padding: 12px 22px 0;
   }
   .svc-line {
+    width: 100%;
+    background: none; border: none; border-bottom: 1px solid rgba(232, 194, 104, 0.08);
+    text-align: left;
     display: flex; align-items: baseline; gap: 8px;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(232, 194, 104, 0.08);
     cursor: pointer;
   }
   .svc-line-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; color: var(--cream);
+    font-size: 0.8125rem; color: var(--cream);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    line-height: 1.5;
   }
   .svc-line-dots {
     flex: 1; border-bottom: 1px dashed rgba(232, 194, 104, 0.25);
@@ -603,7 +613,7 @@ window.appStyles = `
   }
   .svc-line-price {
     font-family: 'Pirata One', serif;
-    font-size: 18px; color: var(--gold);
+    font-size: 1.125rem; color: var(--gold);
   }
 
   /* Info strip */
@@ -619,13 +629,13 @@ window.appStyles = `
   .info-block:last-child { border-right: none; }
   .info-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold);
     margin-bottom: 6px;
   }
   .info-val {
     font-family: 'Pirata One', serif;
-    font-size: 13px; line-height: 1.3;
+    font-size: 0.8125rem; line-height: 1.3;
     color: var(--cream);
     letter-spacing: 0.02em;
   }
@@ -644,19 +654,19 @@ window.appStyles = `
   .book-bar-l {}
   .book-bar-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: rgba(232, 194, 104, 0.75);
   }
   .book-bar-time {
     font-family: 'Pirata One', serif;
-    font-size: 16px; color: var(--cream);
+    font-size: 1rem; color: var(--cream);
     margin-top: 2px;
   }
   .book-bar-btn {
     background: var(--gold); color: var(--ink);
     border: none; padding: 12px 18px;
     font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-    font-size: 12px; letter-spacing: 0.18em;
+    font-size: 0.75rem; letter-spacing: 0.18em;
     cursor: pointer;
     display: flex; align-items: center; gap: 8px;
     text-transform: uppercase;
@@ -668,17 +678,17 @@ window.appStyles = `
     background: var(--ink);
     border-top: 1px solid rgba(232, 194, 104, 0.2);
     display: flex; justify-content: space-around;
-    padding: 8px 0 20px;
+    padding: 8px 0 max(20px, env(safe-area-inset-bottom));
     z-index: 30;
   }
   .bnav-item {
     flex: 1;
     background: transparent; border: none; color: rgba(244, 235, 214, 0.4);
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 8px 0;
+    padding: 11px 0;
     cursor: pointer;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     text-transform: uppercase;
   }
   .bnav-item.active { color: var(--gold); }
@@ -699,17 +709,17 @@ window.appStyles = `
   }
   .blist-empty-mark {
     font-family: 'Pirata One', serif;
-    font-size: 70px; color: rgba(232, 194, 104, 0.25);
+    font-size: 4.375rem; color: rgba(232, 194, 104, 0.25);
     line-height: 1;
   }
   .blist-empty-title {
     font-family: 'Pirata One', serif;
-    font-size: 26px; color: var(--cream);
+    font-size: 1.625rem; color: var(--cream);
     margin: 12px 0 8px;
   }
   .blist-empty-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; color: rgba(244, 235, 214, 0.55);
+    font-size: 0.8125rem; color: rgba(244, 235, 214, 0.55);
     margin-bottom: 22px;
   }
   .booking-card {
@@ -724,18 +734,18 @@ window.appStyles = `
   }
   .booking-card-day {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: var(--gold);
   }
   .booking-card-when {
     font-family: 'Pirata One', serif;
-    font-size: 28px; color: var(--cream);
+    font-size: 1.75rem; color: var(--cream);
     line-height: 1; margin-top: 4px;
   }
   .booking-card-status {
     padding: 4px 8px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.2em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.2em; font-weight: 700;
     border: 1px solid rgba(232, 194, 104, 0.4);
     color: var(--gold);
   }
@@ -748,7 +758,7 @@ window.appStyles = `
     padding-top: 12px;
     border-top: 1px dashed rgba(232, 194, 104, 0.15);
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; color: rgba(244, 235, 214, 0.65);
+    font-size: 0.6875rem; color: rgba(244, 235, 214, 0.65);
     text-transform: uppercase; letter-spacing: 0.08em;
     line-height: 1.6;
   }
@@ -770,20 +780,20 @@ window.appStyles = `
     background: rgba(232, 194, 104, 0.08);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Pirata One', serif;
-    font-size: 32px;
+    font-size: 2rem;
     color: var(--gold);
     margin: 0 auto 14px;
   }
   .acct-name {
     font-family: 'Pirata One', serif;
-    font-size: 28px; color: var(--cream);
+    font-size: 1.75rem; color: var(--cream);
     text-align: center;
     margin: 0;
     letter-spacing: 0.02em;
   }
   .acct-since {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     text-align: center;
     margin-top: 6px;
@@ -800,12 +810,12 @@ window.appStyles = `
   }
   .acct-stat-num {
     font-family: 'Pirata One', serif;
-    font-size: 30px; color: var(--gold);
+    font-size: 1.875rem; color: var(--gold);
     line-height: 1;
   }
   .acct-stat-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(244, 235, 214, 0.55);
     text-transform: uppercase;
     margin-top: 5px;
@@ -828,12 +838,12 @@ window.appStyles = `
   }
   .acct-row-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; letter-spacing: 0.05em; font-weight: 600;
+    font-size: 0.8125rem; letter-spacing: 0.05em; font-weight: 600;
     color: var(--cream);
   }
   .acct-row-val {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: rgba(244, 235, 214, 0.55);
   }
   .acct-row.danger .acct-row-label { color: var(--red); }
@@ -846,7 +856,7 @@ window.appStyles = `
     display: flex; flex-direction: column;
     animation: slideUp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
     background-image:
-      linear-gradient(180deg, #0a0806 0%, var(--ink) 60%);
+      linear-gradient(180deg, var(--ink-2) 0%, var(--ink) 60%);
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -856,18 +866,18 @@ window.appStyles = `
   }
   .sheet-num {
     font-family: 'Pirata One', serif;
-    font-size: 16px; color: var(--gold);
+    font-size: 1rem; color: var(--gold);
   }
   .sheet-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--cream);
     margin-top: 2px;
   }
   .sheet-close {
     background: transparent; border: 1px solid rgba(244, 235, 214, 0.3);
     color: var(--cream);
-    width: 32px; height: 32px;
+    width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
   }
@@ -889,7 +899,7 @@ window.appStyles = `
   .step { display: flex; flex-direction: column; gap: 8px; }
   .step-intro {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     margin-bottom: 6px;
     text-transform: uppercase;
@@ -909,13 +919,13 @@ window.appStyles = `
   .svc-card-l { display: flex; align-items: center; gap: 12px; }
   .svc-card-num {
     font-family: 'Pirata One', serif;
-    font-size: 24px; color: var(--gold);
+    font-size: 1.5rem; color: var(--gold);
     line-height: 1; min-width: 30px;
   }
   .svc-card.checked .svc-card-num { color: var(--ink); }
   .svc-card-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; font-weight: 600;
+    font-size: 0.8125rem; font-weight: 600;
     color: var(--cream);
     text-transform: uppercase; letter-spacing: 0.04em;
     line-height: 1.2;
@@ -923,7 +933,7 @@ window.appStyles = `
   .svc-card.checked .svc-card-name { color: var(--ink); }
   .svc-card-meta {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.18em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.18em; font-weight: 600;
     color: rgba(244, 235, 214, 0.5);
     margin-top: 3px;
   }
@@ -931,7 +941,7 @@ window.appStyles = `
   .svc-card-r { display: flex; align-items: center; gap: 10px; }
   .svc-card-price {
     font-family: 'Pirata One', serif;
-    font-size: 20px; color: var(--gold);
+    font-size: 1.25rem; color: var(--gold);
   }
   .svc-card.checked .svc-card-price { color: var(--ink); }
   .svc-card-check {
@@ -963,13 +973,13 @@ window.appStyles = `
   }
   .barber-init {
     font-family: 'Pirata One', serif;
-    font-size: 22px; color: var(--gold);
+    font-size: 1.375rem; color: var(--gold);
     line-height: 1;
   }
   .barber.checked .barber-init { color: var(--ink); }
   .barber-tag {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 7px; letter-spacing: 0.15em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.15em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
     margin-top: 2px;
   }
@@ -977,19 +987,20 @@ window.appStyles = `
   .barber-mid { flex: 1; }
   .barber-name {
     font-family: 'Pirata One', serif;
-    font-size: 20px; color: var(--cream);
+    font-size: 1.25rem; color: var(--cream);
     letter-spacing: 0.02em; line-height: 1;
   }
   .barber-role {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.2em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.2em; font-weight: 600;
     color: var(--gold);
     margin-top: 4px;
   }
   .barber-spec {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; color: rgba(244, 235, 214, 0.6);
+    font-size: 0.6875rem; color: rgba(244, 235, 214, 0.6);
     margin-top: 3px;
+    line-height: 1.5;
   }
 
   /* Days */
@@ -1005,12 +1016,12 @@ window.appStyles = `
   }
   .day-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 8px; letter-spacing: 0.15em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.15em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
   }
   .day-num {
     font-family: 'Pirata One', serif;
-    font-size: 22px; line-height: 1;
+    font-size: 1.375rem; line-height: 1;
   }
   .day.checked { background: var(--gold); border-color: var(--gold); }
   .day.checked .day-name { color: rgba(13, 12, 10, 0.7); }
@@ -1023,10 +1034,12 @@ window.appStyles = `
     background: transparent;
     border: 1px solid rgba(232, 194, 104, 0.3);
     color: var(--cream);
+    min-height: 44px;
     padding: 10px 0;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px; font-weight: 600;
+    font-size: 0.75rem; font-weight: 600;
     cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
   }
   .slot.checked { background: var(--gold); color: var(--ink); border-color: var(--gold); }
   .slot.taken { opacity: 0.2; text-decoration: line-through; cursor: not-allowed; }
@@ -1037,7 +1050,7 @@ window.appStyles = `
   }
   .sheet-field-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: var(--gold);
   }
   .sheet-input {
@@ -1046,7 +1059,7 @@ window.appStyles = `
     color: var(--cream);
     padding: 14px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px; font-weight: 500;
+    font-size: 0.875rem; font-weight: 500;
     text-transform: uppercase; letter-spacing: 0.05em;
     outline: none;
   }
@@ -1067,19 +1080,19 @@ window.appStyles = `
     border: 1px solid var(--gold);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Pirata One', serif;
-    font-size: 18px; color: var(--gold);
+    font-size: 1.125rem; color: var(--gold);
   }
   .friend-card.on .friend-icon { background: var(--gold); color: var(--ink); }
   .friend-mid { flex: 1; }
   .friend-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px; letter-spacing: 0.1em; font-weight: 700;
+    font-size: 0.8125rem; letter-spacing: 0.1em; font-weight: 700;
     color: var(--cream);
     text-transform: uppercase;
   }
   .friend-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.12em;
+    font-size: 0.6875rem; letter-spacing: 0.12em;
     color: rgba(244, 235, 214, 0.5);
     margin-top: 3px;
     text-transform: uppercase;
@@ -1097,7 +1110,7 @@ window.appStyles = `
     background: var(--gold); color: var(--ink);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 40px; font-weight: 700;
+    font-size: 2.5rem; font-weight: 700;
     z-index: 2;
   }
   .confirm-rings {
@@ -1117,12 +1130,12 @@ window.appStyles = `
   }
   .confirm-eyebrow {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.3em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.3em; font-weight: 700;
     color: var(--gold); margin-bottom: 10px;
   }
   .confirm-title {
     font-family: 'Pirata One', serif;
-    font-size: 38px; line-height: 0.95;
+    font-size: 2.375rem; line-height: 0.95;
     color: var(--cream);
     margin: 0 0 24px;
     letter-spacing: 0.01em;
@@ -1137,7 +1150,7 @@ window.appStyles = `
   .ticket-head {
     display: flex; justify-content: space-between;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.2em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.2em; font-weight: 700;
     padding-bottom: 12px;
     border-bottom: 1px dashed rgba(13, 12, 10, 0.3);
   }
@@ -1147,16 +1160,16 @@ window.appStyles = `
   }
   .ticket-day {
     font-family: 'Pirata One', serif;
-    font-size: 28px; line-height: 1;
+    font-size: 1.75rem; line-height: 1;
   }
   .ticket-time {
     font-family: 'Pirata One', serif;
-    font-size: 36px; line-height: 1;
+    font-size: 2.25rem; line-height: 1;
   }
   .ticket-row {
     display: flex; justify-content: space-between;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px; letter-spacing: 0.05em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.05em; font-weight: 600;
     padding: 5px 0;
     text-transform: uppercase;
     gap: 12px;
@@ -1168,7 +1181,7 @@ window.appStyles = `
   .ticket-total {
     display: flex; justify-content: space-between;
     font-family: 'Pirata One', serif;
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 
   /* Sheet footer */
@@ -1184,19 +1197,20 @@ window.appStyles = `
   }
   .summary-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px; letter-spacing: 0.25em; font-weight: 700;
+    font-size: 0.6875rem; letter-spacing: 0.25em; font-weight: 700;
     color: rgba(232, 194, 104, 0.7);
   }
   .summary-total {
     font-family: 'Pirata One', serif;
-    font-size: 26px; color: var(--gold);
+    font-size: 1.625rem; color: var(--gold);
     line-height: 1; margin-top: 2px;
   }
   .sheet-cta {
     background: var(--gold); color: var(--ink);
     border: none; padding: 14px 16px;
+    border-radius: 100px;
     font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-    font-size: 12px; letter-spacing: 0.18em;
+    font-size: 0.75rem; letter-spacing: 0.18em;
     cursor: pointer; text-transform: uppercase;
     display: flex; align-items: center; gap: 12px;
   }
@@ -1204,8 +1218,68 @@ window.appStyles = `
   .sheet-back {
     background: transparent; border: none; color: rgba(244, 235, 214, 0.6);
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; letter-spacing: 0.2em; font-weight: 600;
+    font-size: 0.6875rem; letter-spacing: 0.2em; font-weight: 600;
     cursor: pointer; padding: 8px 0 0;
     text-transform: uppercase;
+  }
+  .listener-error-banner {
+    position: relative; z-index: 50;
+    background: rgba(232, 93, 62, 0.12);
+    border-bottom: 1px solid rgba(232, 93, 62, 0.3);
+    color: var(--red);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.6875rem; letter-spacing: 0.06em;
+    padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .listener-error-banner button {
+    background: transparent; border: none; color: var(--red);
+    font-size: 0.875rem; cursor: pointer; padding: 0 0 0 12px; line-height: 1;
+  }
+  .sheet-submit-error {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.6875rem; color: var(--red);
+    letter-spacing: 0.05em; text-align: center;
+    padding: 6px 0 0;
+  }
+
+  @media (orientation: landscape) and (max-height: 500px) {
+    .hero { padding: 12px 22px; }
+    .welcome-brand { font-size: 3.25rem; }
+    .sheet-body { max-height: 55vh; overflow-y: auto; }
+    .bnav { position: fixed; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .welcome-badge-dot, .upcoming-dot { animation: none; }
+    .sheet { animation: none; }
+    .confirm-rings, .confirm-rings::before { animation: none; }
+  }
+
+  :focus:not(:focus-visible) { outline: none; }
+
+  .btn:focus-visible,
+  .btn-primary:focus-visible,
+  .btn-outline:focus-visible,
+  .sheet-cta:focus-visible,
+  .sheet-close:focus-visible,
+  .sheet-back:focus-visible,
+  .back-btn:focus-visible,
+  .owner-access-link:focus-visible,
+  .topbar-avatar:focus-visible,
+  .bnav-item:focus-visible,
+  .bnav-book:focus-visible,
+  .svc-tile:focus-visible,
+  .svc-card:focus-visible,
+  .svc-line:focus-visible,
+  .svc-line-more:focus-visible,
+  .barber:focus-visible,
+  .day:focus-visible,
+  .slot:focus-visible,
+  .upcoming-btn:focus-visible,
+  .friend-card:focus-visible,
+  .auth-foot-link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
   }
 `;

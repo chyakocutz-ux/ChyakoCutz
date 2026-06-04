@@ -21,6 +21,7 @@ const AppShell = () => {
   const [tab, setTab] = React.useState("home");
   const [sheet, setSheet] = React.useState(null); // null | { type:'book' } | { type:'manage', id } | { type:'reschedule', id }
   const [bookings, setBookings] = React.useState([]);
+  const [listenerError, setListenerError] = React.useState(false);
 
   // Firebase Auth listener — single source of truth for user state
   React.useEffect(() => {
@@ -56,9 +57,13 @@ const AppShell = () => {
       query = window.fbDb.collection("bookings")
         .where("uid", "==", user.uid);
     }
+    setListenerError(false);
     const unsub = query.onSnapshot(
-      (snap) => setBookings(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "deleted")),
-      () => {} // ignore listener errors silently
+      (snap) => {
+        setListenerError(false);
+        setBookings(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "deleted"));
+      },
+      () => setListenerError(true)
     );
     return unsub;
   }, [user?.uid, user?.role]);
@@ -72,13 +77,14 @@ const AppShell = () => {
 
   const addBooking = async (b) => {
     const customer = { name: user.name, phone: user.phone, email: user.email || "" };
-    await window.fbDb.collection("bookings").add({
+    const ref = await window.fbDb.collection("bookings").add({
       ...b,
       uid: user.uid,
       status: "confirmed",
       customer,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+    return ref.id;
   };
 
   const cancelBooking = (id) =>
@@ -149,6 +155,12 @@ const AppShell = () => {
 
   return (
     <div className="app">
+      {listenerError && (
+        <div className="listener-error-banner">
+          Couldn't load bookings — check your connection.
+          <button onClick={() => setListenerError(false)} aria-label="Dismiss">✕</button>
+        </div>
+      )}
       {/* TOPBAR */}
       <div className="topbar">
         <div className="topbar-l">
@@ -230,7 +242,7 @@ const AppShell = () => {
         <window.BookSheet
           user={user}
           onClose={() => setSheet(null)}
-          onConfirm={(payload) => { addBooking(payload); }}
+          onConfirm={(payload) => addBooking(payload)}
         />
       )}
       {sheet?.type === "manage" && manageBooking && (

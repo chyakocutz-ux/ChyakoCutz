@@ -10,6 +10,8 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
   const [selectedSlot, setSelectedSlot] = React.useState(null);
   const [friend, setFriend] = React.useState(false);
   const [savedId, setSavedId] = React.useState(null);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState(null);
 
   const stepLabels = ["SERVICE", "BARBER", "DATE + TIME", "REVIEW", "CONFIRMED"];
 
@@ -28,7 +30,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
   const toggleService = (id) => setSelectedServices(selectedServices.includes(id) ? selectedServices.filter(x => x !== id) : [...selectedServices, id]);
   const days = React.useMemo(() => D.next14Days(), []);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const payload = {
       services: selectedServices,
       barberId: selectedBarber,
@@ -38,9 +40,17 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
       total: totalPrice,
       dueAtChair,
     };
-    onConfirm(payload);
-    setSavedId(Math.floor(Math.random() * 9000 + 1000));
-    setStep(4);
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const id = await onConfirm(payload);
+      setSavedId(id);
+      setStep(4);
+    } catch {
+      setSubmitError("Couldn't save your booking. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const barberObj = selectedBarber === "any" ? null : D.barbers.find(b => b.id === selectedBarber);
@@ -173,6 +183,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
                 <span className="review-label">EMAIL</span>
                 <span className="review-val">{user.email || "—"}</span>
               </div>
+              <p className="review-hint">Wrong details? Update in Account before booking.</p>
             </div>
 
             <div className="review-block">
@@ -197,14 +208,14 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
                 return (
                   <div key={id} className="review-row">
                     <span className="review-val">{s.name.toUpperCase()}</span>
-                    <span className="review-label" style={{ color: '#e8c268' }}>£{s.price}</span>
+                    <span className="review-label" style={{ color: 'var(--gold)' }}>£{s.price}</span>
                   </div>
                 );
               })}
               {friend && (
                 <div className="review-row">
                   <span className="review-val">+ FRIEND (×2)</span>
-                  <span className="review-label" style={{ color: '#e8c268' }}>×2</span>
+                  <span className="review-label" style={{ color: 'var(--gold)' }}>×2</span>
                 </div>
               )}
             </div>
@@ -213,7 +224,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
               <div className="friend-icon">+1</div>
               <div className="friend-mid">
                 <div className="friend-name">BRING A FRIEND</div>
-                <div className="friend-sub">2 CHAIRS, SAME TIME</div>
+                <div className="friend-sub">2 CHAIRS · PRICE ×2</div>
               </div>
               <div className={`svc-card-check ${friend ? "on" : ""}`}>
                 {friend && <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#000" strokeWidth="2" fill="none"/></svg>}
@@ -224,11 +235,11 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
               <div className="review-block-head">PAYMENT</div>
               <div className="review-row">
                 <span className="review-val">SERVICE TOTAL</span>
-                <span className="review-label" style={{ color: 'rgba(244,235,214,0.55)' }}>£{totalPrice}</span>
+                <span className="review-label" style={{ color: 'var(--cream-dim)' }}>£{totalPrice}</span>
               </div>
               <div className="review-row">
                 <span className="review-val">DUE AT CHAIR</span>
-                <span className="review-label" style={{ color: 'rgba(244,235,214,0.55)' }}>£{dueAtChair}</span>
+                <span className="review-label" style={{ color: 'var(--cream-dim)' }}>£{dueAtChair}</span>
               </div>
             </div>
           </div>
@@ -247,7 +258,7 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
             <div className="ticket">
               <div className="ticket-head">
                 <span>CHYAKO//CUTZ</span>
-                <span>#{savedId}</span>
+                <span>#{savedId ? savedId.slice(-4).toUpperCase() : "—"}</span>
               </div>
               <div className="ticket-when">
                 <div className="ticket-day">{window.formatDayLabel(selectedDate)}</div>
@@ -283,13 +294,14 @@ const BookSheet = ({ user, onClose, onConfirm }) => {
               <div className="summary-label">{`${selectedServices.length} SVC · ${totalMins}MIN${friend ? " · ×2" : ""}`}</div>
               <div className="summary-total">£{totalPrice}</div>
             </div>
-            <button className="sheet-cta" disabled={!canAdvance()} onClick={() => step === 3 ? handleConfirm() : setStep(step + 1)}>
-              <span>{step === 3 ? "LOCK IN" : "NEXT"}</span>
-              <div className="btn-arrow">
+            <button className="sheet-cta" disabled={!canAdvance() || submitting} onClick={() => step === 3 ? handleConfirm() : setStep(step + 1)}>
+              <span>{submitting ? "BOOKING…" : step === 3 ? "LOCK IN" : "NEXT"}</span>
+              {!submitting && <div className="btn-arrow">
                 <svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 12L12 2M5 2h7v7" stroke="currentColor" strokeWidth="1.8" fill="none"/></svg>
-              </div>
+              </div>}
             </button>
           </div>
+          {submitError && <div className="sheet-submit-error">{submitError}</div>}
           {step > 0 && <button className="sheet-back" onClick={() => setStep(step - 1)}>← BACK</button>}
         </div>
       )}

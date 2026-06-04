@@ -59,7 +59,7 @@ const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
 
       {/* UPCOMING BOOKING CARD or BIG BOOK CTA */}
       {upcoming ? (
-        <div className="upcoming" onClick={() => onManage(upcoming.id)}>
+        <div className="upcoming">
           <div className="upcoming-eyebrow">
             <span className="upcoming-dot"/>
             YOUR NEXT CHAIR
@@ -79,8 +79,8 @@ const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
             </div>
           </div>
           <div className="upcoming-actions">
-            <button className="upcoming-btn" onClick={(e) => { e.stopPropagation(); onManage(upcoming.id); }}>MANAGE</button>
-            <button className="upcoming-btn" onClick={(e) => { e.stopPropagation(); onManage(upcoming.id); }}>VIEW TICKET</button>
+            <button className="upcoming-btn" onClick={() => onManage(upcoming.id)}>MANAGE</button>
+            <button className="upcoming-btn" onClick={() => onManage(upcoming.id)}>VIEW TICKET</button>
           </div>
         </div>
       ) : (
@@ -126,11 +126,11 @@ const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
       </div>
       <div className="svc-list">
         {quick.map(s => (
-          <div key={s.id} className="svc-line" onClick={onBook}>
+          <button key={s.id} type="button" className="svc-line" onClick={onBook}>
             <span className="svc-line-name">{s.name}</span>
             <span className="svc-line-dots"/>
             <span className="svc-line-price">£{s.price}</span>
-          </div>
+          </button>
         ))}
         <button className="svc-line-more" onClick={onBook}>
           SEE ALL {D.services.length} SERVICES →
