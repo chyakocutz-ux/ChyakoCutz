@@ -631,4 +631,33 @@ window.appStylesExtra = `
     color: rgba(244, 235, 214, 0.45);
     line-height: 1.5;
   }
+
+  /* ============ TOAST NOTIFICATIONS ============ */
+  .toast-stack {
+    position: absolute; top: 60px; left: 10px; right: 10px;
+    z-index: 300; display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: rgba(10,10,10,0.97);
+    border: 1px solid rgba(232,194,104,0.3);
+    border-left: 3px solid #e8c268;
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    pointer-events: all; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    animation: toast-in 0.25s ease both;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .toast-icon { font-size: 13px; color: #e8c268; flex-shrink: 0; margin-top: 1px; }
+  .toast-content { flex: 1; min-width: 0; }
+  .toast-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    color: #e8c268; margin-bottom: 3px;
+  }
+  .toast-msg { font-size: 11px; color: rgba(244,235,214,0.8); line-height: 1.4; }
 `;

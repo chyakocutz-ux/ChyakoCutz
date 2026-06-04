@@ -23,5 +23,18 @@ service cloud.firestore {
       );
       allow delete: if false;
     }
+
+    // Notifications — owner_inbox for shop alerts, {uid} for customer alerts
+    match /notifications/{docId}/items/{itemId} {
+      allow create: if request.auth != null && (
+        docId == "owner_inbox" ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+      );
+      allow read, update: if request.auth != null && (
+        (docId == "owner_inbox" &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner") ||
+        docId == request.auth.uid
+      );
+    }
   }
 }

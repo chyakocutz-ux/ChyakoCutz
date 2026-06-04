@@ -22,6 +22,8 @@ const AppShell = () => {
   const [sheet, setSheet] = React.useState(null); // null | { type:'book' } | { type:'manage', id } | { type:'reschedule', id }
   const [bookings, setBookings] = React.useState([]);
   const [listenerError, setListenerError] = React.useState(false);
+  const [toasts, setToasts] = React.useState([]);
+  const notifInitialized = React.useRef(false);
 
   // Firebase Auth listener — single source of truth for user state
   React.useEffect(() => {
@@ -68,6 +70,32 @@ const AppShell = () => {
     return unsub;
   }, [user?.uid, user?.role]);
 
+  // Notification listener — shows toasts for new unread notifications
+  React.useEffect(() => {
+    if (!user?.uid) return;
+    notifInitialized.current = false;
+    const col = user.role === "owner"
+      ? window.fbDb.collection("notifications").doc("owner_inbox").collection("items")
+      : window.fbDb.collection("notifications").doc(user.uid).collection("items");
+    const unsub = col.where("read", "==", false).onSnapshot(snap => {
+      if (!notifInitialized.current) {
+        notifInitialized.current = true;
+        return;
+      }
+      snap.docChanges().forEach(change => {
+        if (change.type !== "added") return;
+        const { id } = change.doc;
+        const data = change.doc.data();
+        setToasts(prev => [...prev, { id, ...data }]);
+        setTimeout(() => {
+          setToasts(prev => prev.filter(t => t.id !== id));
+          col.doc(id).update({ read: true }).catch(() => {});
+        }, 5000);
+      });
+    });
+    return unsub;
+  }, [user?.uid, user?.role]);
+
   const signOut = () => {
     setTab("home");
     setSheet(null);
@@ -84,11 +112,31 @@ const AppShell = () => {
       customer,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+    window.fbDb.collection("notifications").doc("owner_inbox").collection("items").add({
+      type: "new_booking",
+      title: "NEW BOOKING",
+      body: `${user.name} booked ${b.slot} on ${b.dateIso}.`,
+      bookingId: ref.id,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false
+    }).catch(() => {});
     return ref.id;
   };
 
-  const cancelBooking = (id) =>
-    window.fbDb.collection("bookings").doc(id).update({ status: "cancelled" });
+  const cancelBooking = async (id) => {
+    await window.fbDb.collection("bookings").doc(id).update({ status: "cancelled" });
+    const booking = bookings.find(b => b.id === id);
+    if (booking) {
+      window.fbDb.collection("notifications").doc("owner_inbox").collection("items").add({
+        type: "cancelled_by_customer",
+        title: "BOOKING CANCELLED",
+        body: `${booking.customer?.name || "A customer"} cancelled their ${booking.slot} on ${booking.dateIso}.`,
+        bookingId: id,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false
+      }).catch(() => {});
+    }
+  };
 
   const deleteBooking = (id) =>
     window.fbDb.collection("bookings").doc(id).update({ status: "deleted" });
@@ -96,8 +144,22 @@ const AppShell = () => {
   const rescheduleBooking = (id, dateIso, slot) =>
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
 
-  const setBookingStatus = (id, status) =>
-    window.fbDb.collection("bookings").doc(id).update({ status });
+  const setBookingStatus = async (id, status) => {
+    await window.fbDb.collection("bookings").doc(id).update({ status });
+    if (status === "cancelled") {
+      const booking = bookings.find(b => b.id === id);
+      if (booking?.uid) {
+        window.fbDb.collection("notifications").doc(booking.uid).collection("items").add({
+          type: "cancelled_by_owner",
+          title: "BOOKING CANCELLED",
+          body: `Your ${booking.slot} appointment on ${booking.dateIso} has been cancelled by the shop.`,
+          bookingId: id,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          read: false
+        }).catch(() => {});
+      }
+    }
+  };
 
   // Show boot spinner while Firebase resolves the persisted session
   if (authLoading) {
@@ -137,14 +199,33 @@ const AppShell = () => {
     />;
   }
 
+  const ToastLayer = () => toasts.length === 0 ? null : (
+    <div className="toast-stack">
+      {toasts.map(t => (
+        <div key={t.id} className="toast" onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}>
+          <div className="toast-icon">✂</div>
+          <div className="toast-content">
+            <div className="toast-title">{t.title}</div>
+            <div className="toast-msg">{t.body}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   // ---------- OWNER DASHBOARD ----------
   if (user.role === "owner") {
-    return <window.OwnerDashboard
-      allBookings={bookings}
-      onSetStatus={setBookingStatus}
-      onDelete={deleteBooking}
-      onSignOut={signOut}
-    />;
+    return (
+      <>
+        <window.OwnerDashboard
+          allBookings={bookings}
+          onSetStatus={setBookingStatus}
+          onDelete={deleteBooking}
+          onSignOut={signOut}
+        />
+        <ToastLayer/>
+      </>
+    );
   }
 
   // ---------- AUTHED APP ----------
@@ -263,6 +344,7 @@ const AppShell = () => {
           onSave={(id, dateIso, slot) => { rescheduleBooking(id, dateIso, slot); setSheet({ type: "manage", id }); }}
         />
       )}
+      <ToastLayer/>
     </div>
   );
 };
