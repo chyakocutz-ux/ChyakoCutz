@@ -176,7 +176,7 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
                     const dayObj = days.find(x => x.iso === selectedDate);
                     const slots = D.generateSlots(dayObj.dayIdx);
                     return slots.map(slot => {
-                      const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings);
+                      const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings) || D.isSlotPast(selectedDate, slot);
                       return (
                         <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
                           {slot}

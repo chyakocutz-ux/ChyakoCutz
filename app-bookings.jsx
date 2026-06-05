@@ -223,7 +223,7 @@ const RescheduleSheet = ({ booking, bookings, onClose, onSave }) => {
           <div className="step-intro" style={{ marginTop: 18 }}>OPEN SLOTS</div>
           <div className="slots">
             {slots.map(s => {
-              const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings);
+              const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings) || D.isSlotPast(dateIso, s);
               return (
                 <button key={s} disabled={taken} className={`slot ${slot === s ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSlot(s)}>
                   {s}

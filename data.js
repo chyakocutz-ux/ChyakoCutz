@@ -79,11 +79,16 @@ window.CHYAKO_DATA = {
       b.status !== "cancelled" && b.status !== "deleted" &&
       b.dateIso === dateStr && b.slot === slot
     );
+    const avail = this.getAvailableBarbers(dateStr);
     if (barberId === "any") {
-      const avail = this.getAvailableBarbers(dateStr);
-      return avail.every(b => active.some(bk => bk.barberId === b.id));
+      return active.length >= avail.length;
     }
-    return active.some(b => b.barberId === barberId);
+    return active.some(b => b.barberId === barberId) || active.length >= avail.length;
+  },
+
+  isSlotPast: function (dateStr, slot) {
+    const slotTime = new Date(dateStr + "T" + slot + ":00");
+    return slotTime <= new Date();
   },
 
   // ---- OWNER DEMO DATA -------------------------------------------------
