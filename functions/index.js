@@ -1,9 +1,5 @@
-const functions          = require("firebase-functions");
-const { onCall }         = require("firebase-functions/v2/https");
-const { defineSecret }   = require("firebase-functions/params");
-const admin              = require("firebase-admin");
-
-const ownerPasscode = defineSecret("OWNER_PASSCODE");
+const functions = require("firebase-functions");
+const admin     = require("firebase-admin");
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -87,9 +83,9 @@ exports.onBookingUpdated = functions.firestore
   });
 
 // Validate owner passcode server-side and return a custom auth token
-exports.verifyOwnerPasscode = onCall({ secrets: [ownerPasscode] }, async (request) => {
-  const { passcode } = request.data;
-  const expected = ownerPasscode.value();
+exports.verifyOwnerPasscode = functions.runWith({ secrets: ["OWNER_PASSCODE"] }).https.onCall(async (data) => {
+  const { passcode } = data;
+  const expected = process.env.OWNER_PASSCODE;
   if (!expected || passcode !== expected) {
     throw new functions.https.HttpsError("permission-denied", "Wrong passcode");
   }
