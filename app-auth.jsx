@@ -355,33 +355,15 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
   const [code, setCode] = React.useState("");
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const OWNER_EMAIL = "owner@chyakocutz.internal";
-
-  const MASTER = "Chyko123!";
 
   const submit = async (e) => {
     e?.preventDefault();
     if (!code.trim()) { setError("Passcode required"); return; }
-    if (code.trim() !== MASTER) { setError("Wrong passcode"); return; }
     setLoading(true);
     try {
-      try {
-        await window.fbAuth.signInWithEmailAndPassword(OWNER_EMAIL, MASTER);
-      } catch (fbErr) {
-        if (fbErr.code === "auth/user-not-found" || fbErr.code === "auth/invalid-credential" || fbErr.code === "auth/invalid-login-credentials") {
-          // First run — create the owner account in Firebase
-          const cred = await window.fbAuth.createUserWithEmailAndPassword(OWNER_EMAIL, MASTER);
-          await window.fbDb.collection("users").doc(cred.user.uid).set({
-            uid: cred.user.uid,
-            name: "Chyako",
-            email: OWNER_EMAIL,
-            role: "owner",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        } else {
-          throw fbErr;
-        }
-      }
+      const fn = window.fbFunctions.httpsCallable("verifyOwnerPasscode");
+      const result = await fn({ passcode: code.trim() });
+      await window.fbAuth.signInWithCustomToken(result.data.token);
     } catch {
       setError("Wrong passcode");
       setLoading(false);

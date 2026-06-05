@@ -9,8 +9,9 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-window.fbAuth = firebase.auth();
-window.fbDb   = firebase.firestore();
+window.fbAuth      = firebase.auth();
+window.fbDb        = firebase.firestore();
+window.fbFunctions = firebase.functions();
 
 // VAPID key: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Key pair
 window.CHYAKO_VAPID_KEY = "BE2GMP4fiNzAHd9EE4qTBg0UffqQMFtzoUHRRcm9Y0sYUrmhMc2bMuuiEPR35MfHH9WkKtiGr40jYHAKj6wT7iU";

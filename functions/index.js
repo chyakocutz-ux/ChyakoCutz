@@ -1,5 +1,9 @@
-const functions = require("firebase-functions");
-const admin     = require("firebase-admin");
+const functions          = require("firebase-functions");
+const { onCall }         = require("firebase-functions/v2/https");
+const { defineSecret }   = require("firebase-functions/params");
+const admin              = require("firebase-admin");
+
+const ownerPasscode = defineSecret("OWNER_PASSCODE");
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -81,3 +85,30 @@ exports.onBookingUpdated = functions.firestore
       }
     }
   });
+
+// Validate owner passcode server-side and return a custom auth token
+exports.verifyOwnerPasscode = onCall({ secrets: [ownerPasscode] }, async (request) => {
+  const { passcode } = request.data;
+  const expected = ownerPasscode.value();
+  if (!expected || passcode !== expected) {
+    throw new functions.https.HttpsError("permission-denied", "Wrong passcode");
+  }
+
+  const snap = await db.collection("users").where("role", "==", "owner").limit(1).get();
+  let ownerUid;
+  if (snap.empty) {
+    const userRecord = await admin.auth().createUser({ displayName: "Chyako" });
+    ownerUid = userRecord.uid;
+    await db.collection("users").doc(ownerUid).set({
+      uid: ownerUid,
+      name: "Chyako",
+      role: "owner",
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+  } else {
+    ownerUid = snap.docs[0].id;
+  }
+
+  const token = await admin.auth().createCustomToken(ownerUid);
+  return { token };
+});
