@@ -85,8 +85,8 @@ exports.onBookingUpdated = functions.firestore
 // Validate owner passcode server-side and return a custom auth token
 exports.verifyOwnerPasscode = functions.runWith({ secrets: ["OWNER_PASSCODE"] }).https.onCall(async (data) => {
   const { passcode } = data;
-  const expected = process.env.OWNER_PASSCODE;
-  if (!expected || passcode !== expected) {
+  const expected = (process.env.OWNER_PASSCODE || "").trim();
+  if (!expected || passcode.trim() !== expected) {
     throw new functions.https.HttpsError("permission-denied", "Wrong passcode");
   }
 

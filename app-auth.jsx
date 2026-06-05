@@ -361,11 +361,13 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
     if (!code.trim()) { setError("Passcode required"); return; }
     setLoading(true);
     try {
+      if (!window.fbFunctions) window.fbFunctions = firebase.functions();
       const fn = window.fbFunctions.httpsCallable("verifyOwnerPasscode");
       const result = await fn({ passcode: code.trim() });
       await window.fbAuth.signInWithCustomToken(result.data.token);
-    } catch {
-      setError("Wrong passcode");
+    } catch (err) {
+      const msg = err?.code === "functions/permission-denied" ? "Wrong passcode" : (err?.message || "Login failed — try again");
+      setError(msg);
       setLoading(false);
     }
   };
