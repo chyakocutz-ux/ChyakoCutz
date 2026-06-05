@@ -17,7 +17,7 @@ const nextBooking = (bookings) => bookings
 const AppShell = () => {
   const [user, setUser] = React.useState(null);
   const [authLoading, setAuthLoading] = React.useState(true);
-  const [authScreen, setAuthScreen] = React.useState("welcome"); // welcome | signup | signin | owner
+  const [authScreen, setAuthScreen] = React.useState("welcome"); // welcome | signup | signin | forgotPassword | owner
   const [tab, setTab] = React.useState("home");
   const [sheet, setSheet] = React.useState(null); // null | { type:'book' } | { type:'manage', id } | { type:'reschedule', id }
   const [bookings, setBookings] = React.useState([]);
@@ -234,6 +234,12 @@ const AppShell = () => {
       return <window.SignInScreen
         onBack={() => setAuthScreen("welcome")}
         onSwitchToSignUp={() => setAuthScreen("signup")}
+        onForgotPassword={() => setAuthScreen("forgotPassword")}
+      />;
+    }
+    if (authScreen === "forgotPassword") {
+      return <window.ForgotPasswordScreen
+        onBack={() => setAuthScreen("signin")}
       />;
     }
     if (authScreen === "owner") {

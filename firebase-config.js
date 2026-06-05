@@ -13,7 +13,7 @@ window.fbAuth = firebase.auth();
 window.fbDb   = firebase.firestore();
 
 // VAPID key: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Key pair
-window.CHYAKO_VAPID_KEY = "YOUR_VAPID_KEY_FROM_FIREBASE_CONSOLE";
+window.CHYAKO_VAPID_KEY = "BE2GMP4fiNzAHd9EE4qTBg0UffqQMFtzoUHRRcm9Y0sYUrmhMc2bMuuiEPR35MfHH9WkKtiGr40jYHAKj6wT7iU";
 
 try {
   window.fbMessaging = firebase.messaging();

@@ -165,7 +165,7 @@ const SignUpScreen = ({ onBack, onSwitchToSignIn }) => {
 };
 
 // ------- SIGN IN -------
-const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
+const SignInScreen = ({ onBack, onSwitchToSignUp, onForgotPassword }) => {
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const clr = () => setErrors({});
@@ -232,6 +232,15 @@ const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
             {errors.password && <span className="field-error">{errors.password}</span>}
           </label>
 
+          <button
+            type="button"
+            className="auth-foot-link"
+            style={{ display: "block", textAlign: "right", marginTop: 4, marginBottom: 8, background: "none", border: "none", padding: 0, cursor: "pointer" }}
+            onClick={onForgotPassword}
+          >
+            Forgot password?
+          </button>
+
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             <span>{loading ? "SIGNING IN…" : "SIGN IN"}</span>
             {!loading && <span className="btn-arrow">
@@ -248,6 +257,98 @@ const SignInScreen = ({ onBack, onSwitchToSignUp }) => {
     </div>
   );
 };
+
+// ------- FORGOT PASSWORD -------
+const ForgotPasswordScreen = ({ onBack }) => {
+  const [sent, setSent] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const val = email.trim();
+    if (!val) { setError("Email required"); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      await window.fbAuth.sendPasswordResetEmail(val);
+      setSent(true);
+    } catch (fbErr) {
+      const code = fbErr.code || "";
+      let msg = "Something went wrong — try again";
+      if (code === "auth/invalid-email") msg = "Enter a valid email address";
+      else if (code === "auth/network-request-failed") msg = "No connection — check your internet";
+      setError(msg);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="screen">
+      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <div className="welcome-veil"/>
+      <div className="auth">
+        <div className="auth-head">
+          <button className="back-btn" onClick={onBack} aria-label="Back">
+            <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
+          </button>
+          <div className="auth-mark">CHYAKO//CUTZ</div>
+          <div style={{ width: 44 }}/>
+        </div>
+
+        {sent ? (
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, padding: "0 8px" }}>
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <circle cx="28" cy="28" r="27" stroke="#e8c268" strokeWidth="1.5"/>
+              <path d="M17 28l8 8 14-16" stroke="#e8c268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <h1 className="auth-title" style={{ textAlign: "center", fontSize: "clamp(28px, 8vw, 42px)" }}>CHECK YOUR<br/><span>INBOX.</span></h1>
+            <p className="auth-sub" style={{ textAlign: "center" }}>A reset link is on its way to <strong style={{ color: "#e8c268", fontWeight: 600 }}>{email.trim()}</strong>. Follow the link to set a new password.</p>
+            <div className="auth-foot" style={{ marginTop: 8 }}>
+              <button type="button" className="auth-foot-link" onClick={onBack}>Back to sign in</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="auth-title">FORGOT<br/><span>PASSWORD?</span></h1>
+            <p className="auth-sub">Enter your email and we'll send a reset link straight to your inbox.</p>
+
+            <form className="form" onSubmit={submit}>
+              <label className="field">
+                <span className="field-label">EMAIL</span>
+                <input
+                  className={`input ${error ? "error" : ""}`}
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@mail.com"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(null); }}
+                />
+                {error && <span className="field-error">{error}</span>}
+              </label>
+
+              <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+                <span>{loading ? "SENDING…" : "SEND RESET LINK"}</span>
+                {!loading && <span className="btn-arrow">
+                  <svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 12L12 2M5 2h7v7" stroke="currentColor" strokeWidth="1.8" fill="none"/></svg>
+                </span>}
+              </button>
+            </form>
+
+            <div className="auth-foot">
+              Remembered it?
+              <button type="button" className="auth-foot-link" onClick={onBack}>Sign in</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+window.ForgotPasswordScreen = ForgotPasswordScreen;
 
 // ------- OWNER LOGIN -------
 const OwnerLoginScreen = ({ onBack, onSubmit }) => {
