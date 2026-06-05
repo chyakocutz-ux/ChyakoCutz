@@ -30,6 +30,14 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
   const toggleService = (id) => setSelectedServices(selectedServices.includes(id) ? selectedServices.filter(x => x !== id) : [...selectedServices, id]);
   const days = React.useMemo(() => D.next14Days(), []);
 
+  const handleSelectBarber = (barberId) => {
+    setSelectedBarber(barberId);
+    if (selectedDate && !D.isBarberAvailableOn(barberId, selectedDate)) {
+      setSelectedDate(null);
+      setSelectedSlot(null);
+    }
+  };
+
   const handleConfirm = async () => {
     const payload = {
       services: selectedServices,
@@ -108,7 +116,7 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
           <div className="step">
             <div className="step-intro">CHOOSE YOUR BLADE.</div>
             {D.barbers.map((b, i) => (
-              <button key={b.id} className={`barber ${selectedBarber === b.id ? "checked" : ""}`} onClick={() => setSelectedBarber(b.id)}>
+              <button key={b.id} className={`barber ${selectedBarber === b.id ? "checked" : ""}`} onClick={() => handleSelectBarber(b.id)}>
                 <div className="barber-avatar">
                   <span className="barber-init">{b.initials}</span>
                   <span className="barber-tag">/{String(i + 1).padStart(2, "0")}</span>
@@ -117,10 +125,16 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
                   <div className="barber-name">{b.name.toUpperCase()}</div>
                   <div className="barber-role">{b.role.toUpperCase()} · {b.years}Y</div>
                   <div className="barber-spec">{b.specialty}</div>
+                  {b.workingDayIdx && b.workingDayIdx.length < 7 && (
+                    <div style={{ marginTop: 6, display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", letterSpacing: "0.15em", fontWeight: 600, color: "rgba(232,194,104,0.68)", border: "1px solid rgba(232,194,104,0.2)", borderRadius: 2, padding: "2px 7px" }}>
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}><circle cx="5" cy="5" r="4" stroke="rgba(232,194,104,0.68)" strokeWidth="1.5"/><path d="M5 2.5V5l1.5 1.5" stroke="rgba(232,194,104,0.68)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                      FRI – SUN ONLY
+                    </div>
+                  )}
                 </div>
               </button>
             ))}
-            <button className={`barber ${selectedBarber === "any" ? "checked" : ""}`} onClick={() => setSelectedBarber("any")}>
+            <button className={`barber ${selectedBarber === "any" ? "checked" : ""}`} onClick={() => handleSelectBarber("any")}>
               <div className="barber-avatar"><span className="barber-init">?</span></div>
               <div className="barber-mid">
                 <div className="barber-name">ANYONE</div>
@@ -135,13 +149,24 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
         {step === 2 && (
           <div className="step">
             <div className="step-intro">WHEN ARE YOU PULLING UP?</div>
+            {selectedBarber === "b3" && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "11px", letterSpacing: "0.15em", fontWeight: 600, color: "rgba(232,194,104,0.82)", background: "rgba(232,194,104,0.07)", border: "1px solid rgba(232,194,104,0.2)", borderRadius: 2, padding: "5px 10px" }}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}><circle cx="5" cy="5" r="4" stroke="rgba(232,194,104,0.82)" strokeWidth="1.5"/><path d="M5 2.5V5l1.5 1.5" stroke="rgba(232,194,104,0.82)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  BARBER 03 · AVAILABLE FRI – SUN
+                </div>
+              </div>
+            )}
             <div className="days">
-              {days.map(d => (
-                <button key={d.iso} className={`day ${selectedDate === d.iso ? "checked" : ""}`} onClick={() => { setSelectedDate(d.iso); setSelectedSlot(null); }}>
-                  <span className="day-name">{d.isToday ? "TDY" : d.day.toUpperCase()}</span>
-                  <span className="day-num">{d.dayNum}</span>
-                </button>
-              ))}
+              {days.map(d => {
+                const unavailable = !D.isBarberAvailableOn(selectedBarber || "any", d.iso);
+                return (
+                  <button key={d.iso} disabled={unavailable} className={`day ${selectedDate === d.iso ? "checked" : ""} ${unavailable ? "taken" : ""}`} onClick={() => { setSelectedDate(d.iso); setSelectedSlot(null); }}>
+                    <span className="day-name">{d.isToday ? "TDY" : d.day.toUpperCase()}</span>
+                    <span className="day-num">{d.dayNum}</span>
+                  </button>
+                );
+              })}
             </div>
             {selectedDate && (
               <>

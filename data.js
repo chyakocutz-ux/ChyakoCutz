@@ -28,12 +28,25 @@ window.CHYAKO_DATA = {
     { id: "wax",          name: "Waxing — Nose & Ears", price: 6,  mins: 10 },
   ],
 
-  // 3 barbers — placeholder names until owner confirms
+  // 3 barbers — workingDayIdx uses Mon=0…Sun=6 to match next14Days dayIdx
   barbers: [
-    { id: "b1", name: "Chyako",   role: "Master Barber",  initials: "C",  years: 12, specialty: "Skin Fades & Beard Sculpting" },
-    { id: "b2", name: "Barber 02", role: "Senior Barber", initials: "02", years: 7,  specialty: "Scissor Work & Classics" },
-    { id: "b3", name: "Barber 03", role: "Barber",        initials: "03", years: 4,  specialty: "Modern Cuts & Tapers" },
+    { id: "b1", name: "Chyako",    role: "Master Barber",  initials: "C",  years: 12, specialty: "Skin Fades & Beard Sculpting", workingDayIdx: [0,1,2,3,4,5,6] },
+    { id: "b2", name: "Barber 02", role: "Senior Barber",  initials: "02", years: 7,  specialty: "Scissor Work & Classics",       workingDayIdx: [0,1,2,3,4,5,6] },
+    { id: "b3", name: "Barber 03", role: "Barber",         initials: "03", years: 4,  specialty: "Modern Cuts & Tapers",          workingDayIdx: [4,5,6] },
   ],
+
+  isBarberAvailableOn: function(barberId, dateStr) {
+    if (!dateStr || barberId === "any") return true;
+    const barber = this.barbers.find(b => b.id === barberId);
+    if (!barber?.workingDayIdx) return true;
+    const dow = (new Date(dateStr + "T12:00:00").getDay() + 6) % 7; // Mon=0…Sun=6
+    return barber.workingDayIdx.includes(dow);
+  },
+
+  getAvailableBarbers: function(dateStr) {
+    if (!dateStr) return this.barbers;
+    return this.barbers.filter(b => this.isBarberAvailableOn(b.id, dateStr));
+  },
 
   hours: [
     { day: "Mon", open: "09:00", close: "19:00" },
@@ -67,7 +80,8 @@ window.CHYAKO_DATA = {
       b.dateIso === dateStr && b.slot === slot
     );
     if (barberId === "any") {
-      return this.barbers.every(b => active.some(bk => bk.barberId === b.id));
+      const avail = this.getAvailableBarbers(dateStr);
+      return avail.every(b => active.some(bk => bk.barberId === b.id));
     }
     return active.some(b => b.barberId === barberId);
   },

@@ -1043,6 +1043,7 @@ window.appStyles = `
   }
   .slot.checked { background: var(--gold); color: var(--ink); border-color: var(--gold); }
   .slot.taken { opacity: 0.2; text-decoration: line-through; cursor: not-allowed; }
+  .day.taken { opacity: 0.28; cursor: not-allowed; }
 
   /* Details form (sheet) */
   .sheet-field {
