@@ -73,6 +73,8 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
             </div>
           ) : (
             <div className="oappt-actions">
+              {b.status !== "done" && <button className="oact done" onClick={() => onSetStatus(b.id, "done")}>✓ DONE</button>}
+              {b.status !== "noshow" && <button className="oact noshow" onClick={() => onSetStatus(b.id, "noshow")}>NO-SHOW</button>}
               <button className="oact reopen" onClick={() => onSetStatus(b.id, "confirmed")}>↺ REOPEN</button>
               {b.status === "cancelled" && (
                 <button className="oact cancel" onClick={() => onDelete(b.id)}>✕ DELETE</button>
