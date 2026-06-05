@@ -364,7 +364,7 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
       if (!window.fbFunctions) window.fbFunctions = firebase.functions();
       const fn = window.fbFunctions.httpsCallable("verifyOwnerPasscode");
       const result = await fn({ passcode: code.trim() });
-      await window.fbAuth.signInWithCustomToken(result.data.token);
+      await window.fbAuth.signInWithEmailAndPassword(result.data.email, result.data.password);
     } catch (err) {
       const msg = err?.code === "functions/permission-denied" ? "Wrong passcode" : (err?.message || "Login failed — try again");
       setError(msg);

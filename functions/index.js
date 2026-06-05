@@ -82,29 +82,34 @@ exports.onBookingUpdated = functions.firestore
     }
   });
 
-// Validate owner passcode server-side and return a custom auth token
-exports.verifyOwnerPasscode = functions.runWith({ secrets: ["OWNER_PASSCODE"] }).https.onCall(async (data) => {
+// Validate owner passcode server-side and return Firebase Auth credentials
+exports.verifyOwnerPasscode = functions.runWith({ secrets: ["OWNER_PASSCODE", "OWNER_FB_PASSWORD"] }).https.onCall(async (data) => {
   const { passcode } = data;
   const expected = (process.env.OWNER_PASSCODE || "").trim();
   if (!expected || passcode.trim() !== expected) {
     throw new functions.https.HttpsError("permission-denied", "Wrong passcode");
   }
 
-  const snap = await db.collection("users").where("role", "==", "owner").limit(1).get();
-  let ownerUid;
-  if (snap.empty) {
-    const userRecord = await admin.auth().createUser({ displayName: "Chyako" });
-    ownerUid = userRecord.uid;
-    await db.collection("users").doc(ownerUid).set({
-      uid: ownerUid,
-      name: "Chyako",
-      role: "owner",
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-  } else {
-    ownerUid = snap.docs[0].id;
+  const ownerEmail = "owner@chyakocutz.internal";
+  const ownerPassword = (process.env.OWNER_FB_PASSWORD || "").trim();
+
+  // Ensure the owner Firebase Auth account exists (first-run setup)
+  try {
+    await admin.auth().getUserByEmail(ownerEmail);
+  } catch (err) {
+    if (err.code === "auth/user-not-found") {
+      const userRecord = await admin.auth().createUser({ email: ownerEmail, password: ownerPassword, displayName: "Chyako" });
+      const snap = await db.collection("users").where("role", "==", "owner").limit(1).get();
+      if (snap.empty) {
+        await db.collection("users").doc(userRecord.uid).set({
+          uid: userRecord.uid, name: "Chyako", email: ownerEmail, role: "owner",
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    } else {
+      throw err;
+    }
   }
 
-  const token = await admin.auth().createCustomToken(ownerUid);
-  return { token };
+  return { email: ownerEmail, password: ownerPassword };
 });
