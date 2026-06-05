@@ -21,6 +21,7 @@ const AppShell = () => {
   const [tab, setTab] = React.useState("home");
   const [sheet, setSheet] = React.useState(null); // null | { type:'book' } | { type:'manage', id } | { type:'reschedule', id }
   const [bookings, setBookings] = React.useState([]);
+  const [allBookings, setAllBookings] = React.useState([]);
   const [listenerError, setListenerError] = React.useState(false);
   const [toasts, setToasts] = React.useState([]);
   const [showNotifPrompt, setShowNotifPrompt] = React.useState(false);
@@ -71,6 +72,19 @@ const AppShell = () => {
     );
     return unsub;
   }, [user?.uid, user?.role]);
+
+  // All-bookings listener — used for slot availability checks across all users
+  React.useEffect(() => {
+    if (!user?.uid) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const unsub = window.fbDb.collection("bookings")
+      .where("dateIso", ">=", today)
+      .onSnapshot(
+        (snap) => setAllBookings(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "deleted")),
+        () => {}
+      );
+    return unsub;
+  }, [user?.uid]);
 
   // Notification listener — shows toasts for new unread notifications
   React.useEffect(() => {
@@ -403,7 +417,7 @@ const AppShell = () => {
       {sheet?.type === "book" && (
         <window.BookSheet
           user={user}
-          bookings={bookings}
+          bookings={allBookings}
           onClose={() => {
             setSheet(null);
             if (notifPromptPending.current) {
@@ -426,7 +440,7 @@ const AppShell = () => {
       {sheet?.type === "reschedule" && manageBooking && (
         <window.RescheduleSheet
           booking={manageBooking}
-          bookings={bookings}
+          bookings={allBookings}
           onClose={() => setSheet({ type: "manage", id: manageBooking.id })}
           onSave={(id, dateIso, slot) => { rescheduleBooking(id, dateIso, slot); setSheet({ type: "manage", id }); }}
         />
