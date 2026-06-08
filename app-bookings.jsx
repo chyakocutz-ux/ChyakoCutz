@@ -220,17 +220,36 @@ const RescheduleSheet = ({ booking, bookings, onClose, onSave }) => {
             ))}
           </div>
 
-          <div className="step-intro" style={{ marginTop: 18 }}>OPEN SLOTS</div>
-          <div className="slots">
-            {slots.map(s => {
-              const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings) || D.isSlotPast(dateIso, s);
+          {(() => {
+            const morning = slots.filter(s => D.slotToMins(s) < 720);
+            const afternoon = slots.filter(s => { const m = D.slotToMins(s); return m >= 720 && m < 1020; });
+            const evening = slots.filter(s => D.slotToMins(s) >= 1020);
+            const renderSection = (label, sectionSlots) => {
+              if (sectionSlots.length === 0) return null;
               return (
-                <button key={s} disabled={taken} className={`slot ${slot === s ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSlot(s)}>
-                  {s}
-                </button>
+                <div key={label}>
+                  <div className="step-intro" style={{ marginTop: 18, marginBottom: 8 }}>{label}</div>
+                  <div className="slots">
+                    {sectionSlots.map(s => {
+                      const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings) || D.isSlotPast(dateIso, s);
+                      return (
+                        <button key={s} disabled={taken} className={`slot ${slot === s ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSlot(s)}>
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               );
-            })}
-          </div>
+            };
+            return (
+              <>
+                {renderSection("MORNING", morning)}
+                {renderSection("AFTERNOON", afternoon)}
+                {renderSection("EVENING", evening)}
+              </>
+            );
+          })()}
         </div>
       </div>
 

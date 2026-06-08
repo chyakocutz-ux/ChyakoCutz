@@ -13,19 +13,19 @@ window.CHYAKO_DATA = {
 
   services: [
     { id: "skin-beard",   name: "Skin Fade, Beard Trim & Shape Up", price: 35, mins: 45, popular: true },
-    { id: "normal-beard", name: "Normal Haircut, Beard Trim & Shape Up", price: 32, mins: 40 },
+    { id: "normal-beard", name: "Normal Haircut, Beard Trim & Shape Up", price: 32, mins: 45 },
     { id: "skin-fade",    name: "Skin Fade", price: 22, mins: 30, popular: true },
-    { id: "taper-fade",   name: "Taper Fade", price: 20, mins: 25 },
-    { id: "normal",       name: "Normal Haircut", price: 19, mins: 25 },
+    { id: "taper-fade",   name: "Taper Fade", price: 20, mins: 30 },
     { id: "scissor",      name: "Scissor Cut", price: 20, mins: 30 },
-    { id: "oap",          name: "O.A.P. Cut", price: 17, mins: 25 },
-    { id: "kids",         name: "Kids Under 12", price: 16, mins: 20 },
-    { id: "beard",        name: "Beard Trim & Shape Up", price: 14, mins: 15 },
-    { id: "crew-2-4",     name: "Crew Cut (1,2,3,4 N)", price: 15, mins: 20 },
-    { id: "crew-1",       name: "Crew Cut (1 No)", price: 12, mins: 15 },
-    { id: "head-shave",   name: "Head Shave (Electric)", price: 14, mins: 20 },
+    { id: "normal",       name: "Normal Haircut", price: 19, mins: 30 },
     { id: "hot-towel",    name: "Hot Towel Shave — Head or Beard", price: 19, mins: 30, popular: true },
-    { id: "wax",          name: "Waxing — Nose & Ears", price: 6,  mins: 10 },
+    { id: "oap",          name: "O.A.P. Cut", price: 17, mins: 30 },
+    { id: "kids",         name: "Kids Under 12", price: 16, mins: 15 },
+    { id: "crew-2-4",     name: "Crew Cut (1,2,3,4 N)", price: 15, mins: 15 },
+    { id: "beard",        name: "Beard Trim & Shape Up", price: 14, mins: 15 },
+    { id: "head-shave",   name: "Head Shave (Electric)", price: 14, mins: 15 },
+    { id: "crew-1",       name: "Crew Cut (1 No)", price: 12, mins: 15 },
+    { id: "wax",          name: "Waxing — Nose & Ears", price: 6,  mins: 15 },
   ],
 
   // 3 barbers — workingDayIdx uses Mon=0…Sun=6 to match next14Days dayIdx
@@ -58,32 +58,46 @@ window.CHYAKO_DATA = {
     { day: "Sun", open: "10:00", close: "17:00" },
   ],
 
-  // Time slots generator (hourly + 30-min)
+  slotToMins: function (slot) {
+    const [h, m] = slot.split(":").map(Number);
+    return h * 60 + m;
+  },
+
+  // Time slots generator — every 15 min
   generateSlots: function (dayIdx) {
-    // dayIdx: 0=Mon ... 6=Sun
     const day = this.hours[dayIdx];
     if (!day) return [];
-    const [oh] = day.open.split(":").map(Number);
-    const [ch] = day.close.split(":").map(Number);
+    const [oh, om] = day.open.split(":").map(Number);
+    const [ch, cm] = day.close.split(":").map(Number);
+    const startMin = oh * 60 + om;
+    const endMin = ch * 60 + cm;
     const slots = [];
-    for (let h = oh; h < ch; h++) {
-      slots.push(`${String(h).padStart(2, "0")}:00`);
-      slots.push(`${String(h).padStart(2, "0")}:30`);
+    for (let m = startMin; m < endMin; m += 15) {
+      slots.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
     }
     return slots;
   },
 
-  isSlotTaken: function (dateStr, slot, barberId, bookings) {
+  isSlotTaken: function (dateStr, slotStr, barberId, bookings) {
     if (!bookings || bookings.length === 0) return false;
+    const slotMin = this.slotToMins(slotStr);
     const active = bookings.filter(b =>
-      b.status !== "cancelled" && b.status !== "deleted" &&
-      b.dateIso === dateStr && b.slot === slot
+      b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === dateStr
     );
     const avail = this.getAvailableBarbers(dateStr);
-    if (barberId === "any") {
-      return active.length >= avail.length;
-    }
-    return active.some(b => b.barberId === barberId) || active.length >= avail.length;
+
+    const isBarberBusy = (bid) => active.some(b => {
+      if (b.barberId !== bid) return false;
+      const bStart = this.slotToMins(b.slot);
+      const bEnd = bStart + (b.durationMins || 30);
+      return slotMin >= bStart && slotMin < bEnd;
+    });
+
+    const busyCount = avail.filter(b => isBarberBusy(b.id)).length;
+    const allBusy = busyCount >= avail.length;
+
+    if (barberId === "any") return allBusy;
+    return isBarberBusy(barberId) || allBusy;
   },
 
   isSlotPast: function (dateStr, slot) {

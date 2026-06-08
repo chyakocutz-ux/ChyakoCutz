@@ -1,7 +1,7 @@
 // BOOK SHEET — Service → Barber → Date+Time → Review → Confirmed
 // User is logged in so we pre-fill name/phone/email and skip the details step.
 
-const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
+const BookSheet = ({ user, bookings, userBookings, onClose, onConfirm }) => {
   const D = window.CHYAKO_DATA;
   const [step, setStep] = React.useState(0);
   const [selectedServices, setSelectedServices] = React.useState([]);
@@ -22,7 +22,13 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
   const canAdvance = () => {
     if (step === 0) return selectedServices.length > 0;
     if (step === 1) return selectedBarber !== null;
-    if (step === 2) return selectedDate !== null && selectedSlot !== null;
+    if (step === 2) {
+      if (!selectedDate || !selectedSlot) return false;
+      const alreadyBooked = (userBookings || []).some(b =>
+        b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === selectedDate
+      );
+      return !alreadyBooked;
+    }
     if (step === 3) return true;
     return false;
   };
@@ -47,6 +53,7 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
       friend,
       total: totalPrice,
       dueAtChair,
+      durationMins: totalMins,
     };
     setSubmitting(true);
     setSubmitError(null);
@@ -160,33 +167,65 @@ const BookSheet = ({ user, bookings, onClose, onConfirm }) => {
             <div className="days">
               {days.map(d => {
                 const unavailable = !D.isBarberAvailableOn(selectedBarber || "any", d.iso);
+                const alreadyBooked = (userBookings || []).some(b =>
+                  b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === d.iso
+                );
                 return (
-                  <button key={d.iso} disabled={unavailable} className={`day ${selectedDate === d.iso ? "checked" : ""} ${unavailable ? "taken" : ""}`} onClick={() => { setSelectedDate(d.iso); setSelectedSlot(null); }}>
+                  <button key={d.iso} disabled={unavailable} className={`day ${selectedDate === d.iso ? "checked" : ""} ${unavailable ? "taken" : ""}`} onClick={() => { setSelectedDate(d.iso); setSelectedSlot(null); }} style={{ position: "relative" }}>
                     <span className="day-name">{d.isToday ? "TDY" : d.day.toUpperCase()}</span>
                     <span className="day-num">{d.dayNum}</span>
+                    {alreadyBooked && !unavailable && (
+                      <span aria-hidden="true" style={{ position: "absolute", bottom: 4, left: "50%", transform: "translateX(-50%)", width: 5, height: 5, borderRadius: "50%", background: "var(--gold)", display: "block" }}/>
+                    )}
                   </button>
                 );
               })}
             </div>
-            {selectedDate && (
-              <>
-                <div className="step-intro" style={{ marginTop: 18 }}>OPEN SLOTS</div>
-                <div className="slots">
-                  {(() => {
-                    const dayObj = days.find(x => x.iso === selectedDate);
-                    const slots = D.generateSlots(dayObj.dayIdx);
-                    return slots.map(slot => {
-                      const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings) || D.isSlotPast(selectedDate, slot);
-                      return (
-                        <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
-                          {slot}
-                        </button>
-                      );
-                    });
-                  })()}
-                </div>
-              </>
-            )}
+            {selectedDate && (() => {
+              const alreadyBooked = (userBookings || []).some(b =>
+                b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === selectedDate
+              );
+              if (alreadyBooked) {
+                return (
+                  <div style={{ marginTop: 18, padding: "14px 16px", background: "rgba(232,194,104,0.07)", border: "1px solid rgba(232,194,104,0.25)", borderRadius: 3 }}>
+                    <div style={{ fontSize: "11px", letterSpacing: "0.15em", fontWeight: 700, color: "var(--gold)", marginBottom: 4 }}>CHAIR ALREADY LOCKED</div>
+                    <div style={{ fontSize: "12px", color: "var(--cream-dim)", lineHeight: 1.5 }}>
+                      You already have a chair this day. Head to <strong style={{ color: "var(--cream)" }}>BOOKINGS</strong> to reschedule or cancel it first.
+                    </div>
+                  </div>
+                );
+              }
+              const dayObj = days.find(x => x.iso === selectedDate);
+              const allSlots = D.generateSlots(dayObj.dayIdx);
+              const morning = allSlots.filter(s => D.slotToMins(s) < 720);
+              const afternoon = allSlots.filter(s => { const m = D.slotToMins(s); return m >= 720 && m < 1020; });
+              const evening = allSlots.filter(s => D.slotToMins(s) >= 1020);
+              const renderSection = (label, sectionSlots) => {
+                if (sectionSlots.length === 0) return null;
+                return (
+                  <div key={label}>
+                    <div className="step-intro" style={{ marginTop: 18, marginBottom: 8 }}>{label}</div>
+                    <div className="slots">
+                      {sectionSlots.map(slot => {
+                        const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings) || D.isSlotPast(selectedDate, slot);
+                        return (
+                          <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
+                            {slot}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              };
+              return (
+                <>
+                  {renderSection("MORNING", morning)}
+                  {renderSection("AFTERNOON", afternoon)}
+                  {renderSection("EVENING", evening)}
+                </>
+              );
+            })()}
           </div>
         )}
 

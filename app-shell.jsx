@@ -418,6 +418,7 @@ const AppShell = () => {
         <window.BookSheet
           user={user}
           bookings={allBookings}
+          userBookings={bookings}
           onClose={() => {
             setSheet(null);
             if (notifPromptPending.current) {
