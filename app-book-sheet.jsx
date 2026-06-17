@@ -1,7 +1,7 @@
 // BOOK SHEET — Service → Barber → Date+Time → Review → Confirmed
 // User is logged in so we pre-fill name/phone/email and skip the details step.
 
-const BookSheet = ({ user, bookings, userBookings, onClose, onConfirm }) => {
+const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }) => {
   const D = window.CHYAKO_DATA;
   const [step, setStep] = React.useState(0);
   const [selectedServices, setSelectedServices] = React.useState([]);
@@ -166,7 +166,8 @@ const BookSheet = ({ user, bookings, userBookings, onClose, onConfirm }) => {
             )}
             <div className="days">
               {days.map(d => {
-                const unavailable = !D.isBarberAvailableOn(selectedBarber || "any", d.iso);
+                const unavailable = !D.isBarberAvailableOn(selectedBarber || "any", d.iso, daysOff)
+                || (selectedBarber === "any" && D.getAvailableBarbers(d.iso, daysOff).length === 0);
                 const alreadyBooked = (userBookings || []).some(b =>
                   b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === d.iso
                 );
@@ -207,7 +208,7 @@ const BookSheet = ({ user, bookings, userBookings, onClose, onConfirm }) => {
                     <div className="step-intro" style={{ marginTop: 18, marginBottom: 8 }}>{label}</div>
                     <div className="slots">
                       {sectionSlots.map(slot => {
-                        const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings) || D.isSlotPast(selectedDate, slot);
+                        const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings, daysOff) || D.isSlotPast(selectedDate, slot);
                         return (
                           <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
                             {slot}

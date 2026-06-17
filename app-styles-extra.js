@@ -713,4 +713,67 @@ window.appStylesExtra = `
     color: rgba(244,235,214,0.3);
     padding: 8px 0;
   }
+
+  /* ---- DAYS OFF ---- */
+  .oday-off-dot {
+    position: absolute; bottom: 3px; right: 4px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(232,194,104,0.65);
+    display: block;
+  }
+  .oday.on .oday-off-dot {
+    background: rgba(0,0,0,0.55);
+  }
+  .odaysoff-section {
+    margin: 12px 0 4px;
+    border: 1px solid rgba(244,235,214,0.08);
+    overflow: hidden;
+  }
+  .odaysoff-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; color: rgba(244,235,214,0.35);
+    padding: 8px 14px 6px;
+    background: rgba(244,235,214,0.03);
+    border-bottom: 1px solid rgba(244,235,214,0.06);
+  }
+  .odayoff-row {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 10px 14px;
+    background: none; border: none; border-bottom: 1px solid rgba(244,235,214,0.05);
+    cursor: pointer; text-align: left;
+    transition: background 0.12s;
+  }
+  .odayoff-row:last-child { border-bottom: none; }
+  .odayoff-row:active { background: rgba(244,235,214,0.04); }
+  .odayoff-init {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(244,235,214,0.08);
+    border: 1px solid rgba(244,235,214,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: rgba(244,235,214,0.7);
+    flex-shrink: 0;
+  }
+  .odayoff-row.active .odayoff-init {
+    background: rgba(232,194,104,0.15);
+    border-color: rgba(232,194,104,0.4);
+    color: #e8c268;
+  }
+  .odayoff-name {
+    flex: 1;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; color: rgba(244,235,214,0.65);
+  }
+  .odayoff-row.active .odayoff-name { color: rgba(244,235,214,0.9); }
+  .odayoff-action {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.15em; color: rgba(244,235,214,0.3);
+    border: 1px solid rgba(244,235,214,0.12);
+    border-radius: 2px; padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .odayoff-row.active .odayoff-action {
+    color: #e8c268;
+    border-color: rgba(232,194,104,0.35);
+    background: rgba(232,194,104,0.08);
+  }
 `;

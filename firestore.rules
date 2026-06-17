@@ -21,6 +21,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Days off — owner can write, any authenticated user can read (needed for slot availability)
+    match /daysOff/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner";
+    }
+
     // Notifications — owner_inbox for shop alerts, {uid} for customer alerts
     match /notifications/{docId}/items/{itemId} {
       allow create: if request.auth != null && (

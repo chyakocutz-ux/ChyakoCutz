@@ -1,7 +1,7 @@
 // OWNER DASHBOARD — master view of every booking + workload management.
 // Two segments: SCHEDULE (day-by-day agenda) and ALL BOOKINGS (full upcoming list).
 
-const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
+const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayOff, onRemoveDayOff, onSignOut }) => {
   const D = window.CHYAKO_DATA;
   const days = React.useMemo(() => D.next14Days(), []);
   const [seg, setSeg] = React.useState("schedule"); // schedule | all
@@ -25,6 +25,10 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
 
   const dayActive = allBookings.filter(b => b.dateIso === selectedIso && b.status !== "cancelled");
   const chairValue = dayActive.reduce((s, b) => s + (b.dueAtChair ?? b.total ?? 0), 0);
+  const barbeCountOn = D.barbers.filter(b => {
+    if (!D.isBarberAvailableOn(b.id, selectedIso, daysOff)) return false;
+    return true;
+  }).length;
 
   // ---- barber chip counts (selected day) ----
   const barberCount = (id) => allBookings.filter(b => b.dateIso === selectedIso && b.status !== "cancelled" && (id === "all" || b.barberId === id)).length;
@@ -111,11 +115,13 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
             <div className="oday-strip">
               {days.map(d => {
                 const c = countForDay(d.iso);
+                const hasOff = (daysOff || []).some(x => x.dateIso === d.iso);
                 return (
                   <button key={d.iso} className={`oday ${selectedIso === d.iso ? "on" : ""}`} onClick={() => setSelectedIso(d.iso)}>
                     <span className="oday-name">{d.isToday ? "TDY" : d.day.toUpperCase()}</span>
                     <span className="oday-num">{d.dayNum}</span>
                     {c > 0 && <span className="oday-count">{c}</span>}
+                    {hasOff && <span className="oday-off-dot"/>}
                   </button>
                 );
               })}
@@ -131,6 +137,10 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
                 <div className="ostat-num">£{chairValue}</div>
                 <div className="ostat-label">CHAIR VALUE</div>
               </div>
+              <div className="ostat">
+                <div className="ostat-num">{barbeCountOn}</div>
+                <div className="ostat-label">BARBERS ON</div>
+              </div>
             </div>
 
             {/* BARBER FILTER */}
@@ -143,6 +153,25 @@ const OwnerDashboard = ({ allBookings, onSetStatus, onDelete, onSignOut }) => {
                   {b.name.toUpperCase()} <span className="obarber-c">{barberCount(b.id)}</span>
                 </button>
               ))}
+            </div>
+
+            {/* DAYS OFF */}
+            <div className="odaysoff-section">
+              <div className="odaysoff-label">DAYS OFF</div>
+              {D.barbers.map(b => {
+                const isOff = (daysOff || []).some(x => x.barberId === b.id && x.dateIso === selectedIso);
+                return (
+                  <button
+                    key={b.id}
+                    className={`odayoff-row ${isOff ? "active" : ""}`}
+                    onClick={() => isOff ? onRemoveDayOff(b.id, selectedIso) : onAddDayOff(b.id, selectedIso)}
+                  >
+                    <span className="odayoff-init">{b.initials}</span>
+                    <span className="odayoff-name">{b.name.toUpperCase()}</span>
+                    <span className="odayoff-action">{isOff ? "✕ OFF TODAY" : "+ MARK OFF"}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* AGENDA */}

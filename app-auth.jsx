@@ -366,7 +366,13 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
       const result = await fn({ passcode: code.trim() });
       await window.fbAuth.signInWithEmailAndPassword(result.data.email, result.data.password);
     } catch (err) {
-      const msg = err?.code === "functions/permission-denied" ? "Wrong passcode" : (err?.message || "Login failed — try again");
+      const code = err?.code || "";
+      let msg = err?.message || "Login failed — try again";
+      if (code === "functions/permission-denied") msg = "Wrong passcode";
+      else if (code === "functions/not-found" || code === "functions/unimplemented") msg = "Login service not found — check Functions are deployed";
+      else if (code === "functions/internal") msg = "Login service error — check Firebase Function logs";
+      else if (code === "auth/wrong-password" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") msg = "Auth mismatch — OWNER_FB_PASSWORD secret may need updating";
+      else if (code === "auth/user-not-found") msg = "Owner account not set up — run the function once to create it";
       setError(msg);
       setLoading(false);
     }

@@ -187,7 +187,7 @@ const ManageSheet = ({ booking, onClose, onCancel, onDelete, onReschedule }) => 
 };
 
 // ============ RESCHEDULE SHEET ============
-const RescheduleSheet = ({ booking, bookings, onClose, onSave }) => {
+const RescheduleSheet = ({ booking, bookings, daysOff, onClose, onSave }) => {
   const D = window.CHYAKO_DATA;
   const [dateIso, setDateIso] = React.useState(booking.dateIso);
   const [slot, setSlot] = React.useState(booking.slot);
@@ -231,7 +231,7 @@ const RescheduleSheet = ({ booking, bookings, onClose, onSave }) => {
                   <div className="step-intro" style={{ marginTop: 18, marginBottom: 8 }}>{label}</div>
                   <div className="slots">
                     {sectionSlots.map(s => {
-                      const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings) || D.isSlotPast(dateIso, s);
+                      const taken = D.isSlotTaken(dateIso, s, booking.barberId, bookings, daysOff) || D.isSlotPast(dateIso, s);
                       return (
                         <button key={s} disabled={taken} className={`slot ${slot === s ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSlot(s)}>
                           {s}

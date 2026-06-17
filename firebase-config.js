@@ -17,9 +17,15 @@ window.fbFunctions = firebase.functions();
 window.CHYAKO_VAPID_KEY = "BE2GMP4fiNzAHd9EE4qTBg0UffqQMFtzoUHRRcm9Y0sYUrmhMc2bMuuiEPR35MfHH9WkKtiGr40jYHAKj6wT7iU";
 
 try {
-  window.fbMessaging = firebase.messaging();
-  // Foreground messages are handled by the Firestore toast system — suppress duplicate FCM popups
-  window.fbMessaging.onMessage(() => {});
+  // Push notifications require HTTPS — skip on localhost to avoid service worker errors
+  const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (!isLocalhost) {
+    window.fbMessaging = firebase.messaging();
+    // Foreground messages are handled by the Firestore toast system — suppress duplicate FCM popups
+    window.fbMessaging.onMessage(() => {});
+  } else {
+    window.fbMessaging = null;
+  }
 } catch (_) {
   window.fbMessaging = null;
 }

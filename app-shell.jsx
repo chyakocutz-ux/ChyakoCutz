@@ -22,6 +22,7 @@ const AppShell = () => {
   const [sheet, setSheet] = React.useState(null); // null | { type:'book' } | { type:'manage', id } | { type:'reschedule', id }
   const [bookings, setBookings] = React.useState([]);
   const [allBookings, setAllBookings] = React.useState([]);
+  const [daysOff, setDaysOff] = React.useState([]);
   const [listenerError, setListenerError] = React.useState(false);
   const [toasts, setToasts] = React.useState([]);
   const [showNotifPrompt, setShowNotifPrompt] = React.useState(false);
@@ -42,11 +43,14 @@ const AppShell = () => {
         if (snap.exists) {
           setUser({ uid: firebaseUser.uid, ...snap.data() });
         } else {
-          // User authenticated but no Firestore profile yet (edge case)
-          setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: "customer" });
+          // No Firestore profile yet — detect owner by reserved email as fallback
+          const role = firebaseUser.email === "owner@chyakocutz.internal" ? "owner" : "customer";
+          setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role });
         }
       } catch {
-        setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: "customer" });
+        // Firestore read failed — detect owner by reserved email so they're never locked out
+        const role = firebaseUser.email === "owner@chyakocutz.internal" ? "owner" : "customer";
+        setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role });
       }
       setAuthLoading(false);
     });
@@ -81,6 +85,19 @@ const AppShell = () => {
       .where("dateIso", ">=", today)
       .onSnapshot(
         (snap) => setAllBookings(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "deleted")),
+        () => {}
+      );
+    return unsub;
+  }, [user?.uid]);
+
+  // Days-off listener — real-time sync of barber days off (forward-looking)
+  React.useEffect(() => {
+    if (!user?.uid) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const unsub = window.fbDb.collection("daysOff")
+      .where("dateIso", ">=", today)
+      .onSnapshot(
+        (snap) => setDaysOff(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
         () => {}
       );
     return unsub;
@@ -203,6 +220,15 @@ const AppShell = () => {
   const deleteBooking = (id) =>
     window.fbDb.collection("bookings").doc(id).update({ status: "deleted" });
 
+  const addDayOff = (barberId, dateIso) =>
+    window.fbDb.collection("daysOff").doc(`${barberId}_${dateIso}`).set({
+      barberId, dateIso, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.error("addDayOff failed:", err));
+
+  const removeDayOff = (barberId, dateIso) =>
+    window.fbDb.collection("daysOff").doc(`${barberId}_${dateIso}`).delete()
+      .catch(err => console.error("removeDayOff failed:", err));
+
   const rescheduleBooking = (id, dateIso, slot) =>
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
 
@@ -313,8 +339,11 @@ const AppShell = () => {
       <>
         <window.OwnerDashboard
           allBookings={bookings}
+          daysOff={daysOff}
           onSetStatus={setBookingStatus}
           onDelete={deleteBooking}
+          onAddDayOff={addDayOff}
+          onRemoveDayOff={removeDayOff}
           onSignOut={signOut}
         />
         <ToastLayer/>
@@ -419,6 +448,7 @@ const AppShell = () => {
           user={user}
           bookings={allBookings}
           userBookings={bookings}
+          daysOff={daysOff}
           onClose={() => {
             setSheet(null);
             if (notifPromptPending.current) {
@@ -442,6 +472,7 @@ const AppShell = () => {
         <window.RescheduleSheet
           booking={manageBooking}
           bookings={allBookings}
+          daysOff={daysOff}
           onClose={() => setSheet({ type: "manage", id: manageBooking.id })}
           onSave={(id, dateIso, slot) => { rescheduleBooking(id, dateIso, slot); setSheet({ type: "manage", id }); }}
         />

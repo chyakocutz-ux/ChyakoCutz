@@ -10,15 +10,16 @@ firebase.initializeApp({
   appId:             '1:853091953874:web:1275010c4b78b8a6e7110b'
 });
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage(payload => {
-  const { title, body } = payload.notification || {};
-  self.registration.showNotification(title || 'Chyako Cutz', {
-    body:  body || '',
-    icon:  '/assets/logo.png',
-    badge: '/assets/logo.png',
-    tag:   payload.data?.bookingId || 'ck',
-    data:  payload.data || {}
+try {
+  const messaging = firebase.messaging();
+  messaging.onBackgroundMessage(payload => {
+    const { title, body } = payload.notification || {};
+    self.registration.showNotification(title || 'Chyako Cutz', {
+      body:  body || '',
+      icon:  '/assets/logo.png',
+      badge: '/assets/logo.png',
+      tag:   payload.data?.bookingId || 'ck',
+      data:  payload.data || {}
+    });
   });
-});
+} catch (_) {}

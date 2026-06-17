@@ -35,17 +35,19 @@ window.CHYAKO_DATA = {
     { id: "b3", name: "Barber 03", role: "Barber",         initials: "03", years: 4,  specialty: "Modern Cuts & Tapers",          workingDayIdx: [4,5,6] },
   ],
 
-  isBarberAvailableOn: function(barberId, dateStr) {
+  isBarberAvailableOn: function(barberId, dateStr, daysOff) {
     if (!dateStr || barberId === "any") return true;
     const barber = this.barbers.find(b => b.id === barberId);
     if (!barber?.workingDayIdx) return true;
     const dow = (new Date(dateStr + "T12:00:00").getDay() + 6) % 7; // Mon=0…Sun=6
-    return barber.workingDayIdx.includes(dow);
+    if (!barber.workingDayIdx.includes(dow)) return false;
+    if (daysOff && daysOff.some(d => d.barberId === barberId && d.dateIso === dateStr)) return false;
+    return true;
   },
 
-  getAvailableBarbers: function(dateStr) {
+  getAvailableBarbers: function(dateStr, daysOff) {
     if (!dateStr) return this.barbers;
-    return this.barbers.filter(b => this.isBarberAvailableOn(b.id, dateStr));
+    return this.barbers.filter(b => this.isBarberAvailableOn(b.id, dateStr, daysOff));
   },
 
   hours: [
@@ -78,13 +80,13 @@ window.CHYAKO_DATA = {
     return slots;
   },
 
-  isSlotTaken: function (dateStr, slotStr, barberId, bookings) {
+  isSlotTaken: function (dateStr, slotStr, barberId, bookings, daysOff) {
     if (!bookings || bookings.length === 0) return false;
     const slotMin = this.slotToMins(slotStr);
     const active = bookings.filter(b =>
       b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === dateStr
     );
-    const avail = this.getAvailableBarbers(dateStr);
+    const avail = this.getAvailableBarbers(dateStr, daysOff);
 
     const isBarberBusy = (bid) => active.some(b => {
       if (b.barberId !== bid) return false;
@@ -97,6 +99,7 @@ window.CHYAKO_DATA = {
     const allBusy = busyCount >= avail.length;
 
     if (barberId === "any") return allBusy;
+    if (daysOff && daysOff.some(d => d.barberId === barberId && d.dateIso === dateStr)) return true;
     return isBarberBusy(barberId) || allBusy;
   },
 
