@@ -80,27 +80,34 @@ window.CHYAKO_DATA = {
     return slots;
   },
 
-  isSlotTaken: function (dateStr, slotStr, barberId, bookings, daysOff) {
+  isSlotTaken: function (dateStr, slotStr, barberId, bookings, daysOff, newDurationMins) {
     if (!bookings || bookings.length === 0) return false;
-    const slotMin = this.slotToMins(slotStr);
+    const newStart = this.slotToMins(slotStr);
+    const newEnd   = newStart + (newDurationMins || 15);
     const active = bookings.filter(b =>
       b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === dateStr
     );
     const avail = this.getAvailableBarbers(dateStr, daysOff);
 
-    const isBarberBusy = (bid) => active.some(b => {
-      if (b.barberId !== bid) return false;
+    // Bidirectional interval overlap: new booking [newStart, newEnd) vs existing [bStart, bEnd)
+    const overlaps = (b) => {
       const bStart = this.slotToMins(b.slot);
-      const bEnd = bStart + (b.durationMins || 30);
-      return slotMin >= bStart && slotMin < bEnd;
-    });
+      const bEnd   = bStart + (b.durationMins || 30);
+      return newStart < bEnd && newEnd > bStart;
+    };
 
-    const busyCount = avail.filter(b => isBarberBusy(b.id)).length;
-    const allBusy = busyCount >= avail.length;
+    // Barbers with a specific booking that overlaps
+    const specificBusy = new Set(
+      active.filter(b => b.barberId && b.barberId !== "any" && overlaps(b)).map(b => b.barberId)
+    );
+    // "any"-barber bookings each consume one slot from the available pool
+    const anyCount = active.filter(b => (!b.barberId || b.barberId === "any") && overlaps(b)).length;
+
+    const allBusy = (specificBusy.size + anyCount) >= avail.length;
 
     if (barberId === "any") return allBusy;
     if (daysOff && daysOff.some(d => d.barberId === barberId && d.dateIso === dateStr)) return true;
-    return isBarberBusy(barberId) || allBusy;
+    return specificBusy.has(barberId) || allBusy;
   },
 
   isSlotPast: function (dateStr, slot) {

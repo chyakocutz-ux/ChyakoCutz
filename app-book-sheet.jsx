@@ -45,6 +45,11 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
   };
 
   const handleConfirm = async () => {
+    // Re-check availability at submit time to guard against race conditions
+    if (D.isSlotTaken(selectedDate, selectedSlot, selectedBarber || "any", bookings, daysOff, totalMins)) {
+      setSubmitError("That slot was just taken — go back and pick another time.");
+      return;
+    }
     const payload = {
       services: selectedServices,
       barberId: selectedBarber,
@@ -208,7 +213,7 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
                     <div className="step-intro" style={{ marginTop: 18, marginBottom: 8 }}>{label}</div>
                     <div className="slots">
                       {sectionSlots.map(slot => {
-                        const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings, daysOff) || D.isSlotPast(selectedDate, slot);
+                        const taken = D.isSlotTaken(selectedDate, slot, selectedBarber || "any", bookings, daysOff, totalMins) || D.isSlotPast(selectedDate, slot);
                         return (
                           <button key={slot} disabled={taken} className={`slot ${selectedSlot === slot ? "checked" : ""} ${taken ? "taken" : ""}`} onClick={() => setSelectedSlot(slot)}>
                             {slot}
