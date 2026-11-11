@@ -116,7 +116,8 @@ const OwnerDashboard = ({ mode = "owner", staffBarberId, staffName, barbers, all
 
       <div className="owner-body">
         {seg === "schedule" && (
-          <>
+          <div className="osched">
+            <aside className="oside">
             {/* DATE STRIP */}
             <div className="oday-strip">
               {days.map(d => {
@@ -180,7 +181,10 @@ const OwnerDashboard = ({ mode = "owner", staffBarberId, staffName, barbers, all
               })}
             </div>
 
+            </aside>
+
             {/* AGENDA */}
+            <section className="omain">
             <div className="oagenda-head">{window.formatDayLabel(selectedIso)} — {dayAppts.length} {dayAppts.length === 1 ? "BOOKING" : "BOOKINGS"}</div>
             {dayAppts.length === 0 ? (
               <div className="oempty">
@@ -191,11 +195,13 @@ const OwnerDashboard = ({ mode = "owner", staffBarberId, staffName, barbers, all
             ) : (
               dayAppts.map(b => <Appt key={b.id} b={b}/>)
             )}
-          </>
+            </section>
+          </div>
         )}
 
         {seg === "all" && (
           <>
+            <div className="oall">
             <div className="oall-head">UPCOMING — {upcomingGroups.reduce((s, g) => s + g.items.length, 0)} BOOKINGS</div>
             {upcomingGroups.length === 0 ? (
               <div className="oempty">
@@ -214,6 +220,7 @@ const OwnerDashboard = ({ mode = "owner", staffBarberId, staffName, barbers, all
                 </div>
               ))
             )}
+            </div>
           </>
         )}
 
