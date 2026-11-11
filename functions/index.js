@@ -235,6 +235,33 @@ exports.updateBarber = functions.https.onCall(async (data, context) => {
   return { ok: true };
 });
 
+// Soft-delete a barber: gone from booking and the staff list, but the doc stays so
+// past bookings still show their name. Also removes their staff login if they have one.
+exports.deleteBarber = functions.https.onCall(async (data, context) => {
+  await assertOwner(context);
+  const id = str(data?.id, 40);
+  const ref = db.collection("barbers").doc(id);
+  const snap = await ref.get();
+  if (!id || !snap.exists) throw new HttpsError("not-found", "Barber not found");
+  const staffUid = snap.data().staffUid;
+  if (staffUid) {
+    const userRef = db.collection("users").doc(staffUid);
+    const userDoc = await userRef.get();
+    if (userDoc.exists && userDoc.data().role === "staff") {
+      await admin.auth().updateUser(staffUid, { disabled: true }).catch(() => {});
+      await admin.auth().revokeRefreshTokens(staffUid).catch(() => {});
+      await userRef.update({ role: "former_staff", removedAt: admin.firestore.FieldValue.serverTimestamp() });
+    }
+  }
+  await ref.update({
+    active: false,
+    deleted: true,
+    deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+    staffUid: admin.firestore.FieldValue.delete()
+  });
+  return { ok: true };
+});
+
 // Create a personal login for a staff member, linked to a barber chair
 exports.createStaff = withEmail.https.onCall(async (data, context) => {
   await assertOwner(context);

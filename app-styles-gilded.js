@@ -203,6 +203,7 @@ window.appStylesGilded = `
   .booking-card.upcoming { border: 3px double rgba(217,178,92,0.6) !important; margin: 0 0 10px !important; padding: 16px !important; }
   .acct-avatar { font-family: var(--serif) !important; border-radius: 50%; }
   .bk-tab { font-family: var(--serif); letter-spacing: 0.16em; }
+  .ostaff-card > .ostaff-form { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(217,178,92,0.18); }
 
   /* ---------- desktop / tablet (nav moves to the top bar) ---------- */
   @media (min-width: 768px) {

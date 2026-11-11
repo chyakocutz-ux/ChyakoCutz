@@ -104,11 +104,81 @@ const StaffForm = ({ barber, onDone, onCancel }) => {
   );
 };
 
+// Edit a barber's public details (name, initials, title, working days)
+const EditBarberForm = ({ barber, onDone, onCancel }) => {
+  const [name, setName] = React.useState(barber.name || "");
+  const [initials, setInitials] = React.useState(barber.initials || "");
+  const [initialsTouched, setInitialsTouched] = React.useState(false);
+  const [title, setTitle] = React.useState(barber.role || "Barber");
+  const [days, setDays] = React.useState(barber.workingDayIdx || [0, 1, 2, 3, 4, 5, 6]);
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const toggleDay = (d) => setDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d].sort());
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    if (!name.trim()) return setError("Name required");
+    if (days.length === 0) return setError("Pick at least one working day");
+    setBusy(true);
+    try {
+      await callFn("updateBarber", { id: barber.id, fields: {
+        name: name.trim(),
+        initials: (initials.trim() || name.trim()[0] || "?").toUpperCase(),
+        role: title.trim() || "Barber",
+        workingDayIdx: days,
+      }});
+      onDone();
+    } catch (err) {
+      setError(errMsg(err));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form className="ostaff-form" onSubmit={submit}>
+      <div className="ostaff-form-title">EDIT {barber.name.toUpperCase()}</div>
+      <label className="field">
+        <span className="field-label">NAME</span>
+        <input className="input" value={name} onChange={e => {
+          const v = e.target.value;
+          // Initials follow the name until the owner edits them by hand
+          if (!initialsTouched) setInitials((v.trim()[0] || "").toUpperCase());
+          setName(v);
+        }} maxLength={40}/>
+      </label>
+      <label className="field">
+        <span className="field-label">INITIALS <span>(on their avatar, up to 3)</span></span>
+        <input className="input" value={initials} onChange={e => { setInitialsTouched(true); setInitials(e.target.value); }} maxLength={3}/>
+      </label>
+      <label className="field">
+        <span className="field-label">TITLE <span>(shown to customers)</span></span>
+        <input className="input" value={title} onChange={e => setTitle(e.target.value)} maxLength={40}/>
+      </label>
+      <div className="field">
+        <span className="field-label">WORKING DAYS</span>
+        <div className="ostaff-days">
+          {DAY_NAMES.map((d, i) => (
+            <button type="button" key={d} className={`ostaff-day ${days.includes(i) ? "on" : ""}`} onClick={() => toggleDay(i)}>{d}</button>
+          ))}
+        </div>
+      </div>
+      {error && <div className="field-error">{error}</div>}
+      <div className="ostaff-form-actions">
+        <button type="button" className="ostaff-btn" onClick={onCancel} disabled={busy}>CANCEL</button>
+        <button type="submit" className="ostaff-btn primary" disabled={busy}>{busy ? "SAVING…" : "SAVE"}</button>
+      </div>
+    </form>
+  );
+};
+
 const StaffPanel = ({ barbers }) => {
   const [staffUsers, setStaffUsers] = React.useState({});
   const [formFor, setFormFor] = React.useState(null);     // null | "new" | barberId
   const [confirmRemove, setConfirmRemove] = React.useState(null); // barberId
-  const [hideOnRemove, setHideOnRemove] = React.useState(true);
+  const [hideOnRemove, setHideOnRemove] = React.useState(false);
+  const [editFor, setEditFor] = React.useState(null);       // barberId
+  const [confirmDelete, setConfirmDelete] = React.useState(null); // barberId
   const [busyId, setBusyId] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [created, setCreated] = React.useState(null);     // { name, email, password }
@@ -140,6 +210,15 @@ const StaffPanel = ({ barbers }) => {
     setBusyId(null);
   };
 
+  const deleteBarber = async (b) => {
+    setBusyId(b.id); setError(null);
+    try {
+      await callFn("deleteBarber", { id: b.id });
+      setConfirmDelete(null);
+    } catch (err) { setError(errMsg(err)); }
+    setBusyId(null);
+  };
+
   return (
     <div className="ostaff">
       <p className="ostaff-intro">
@@ -164,7 +243,7 @@ const StaffPanel = ({ barbers }) => {
 
       {error && <div className="field-error ostaff-error">{error}</div>}
 
-      {barbers.map(b => {
+      {barbers.filter(b => !b.deleted).map(b => {
         const account = b.staffUid ? staffUsers[b.staffUid] : null;
         const hidden = b.active === false;
         const busy = busyId === b.id;
@@ -194,16 +273,28 @@ const StaffPanel = ({ barbers }) => {
                   <button className="ostaff-btn danger" onClick={() => removeAccess(b)} disabled={busy}>{busy ? "REMOVING…" : "REMOVE ACCESS"}</button>
                 </div>
               </div>
+            ) : confirmDelete === b.id ? (
+              <div className="ostaff-confirm">
+                <div>Delete {b.name}? They'll disappear from booking and from this list{b.staffUid ? ", and their login will stop working" : ""}. Past bookings keep their name.</div>
+                <div className="ostaff-form-actions">
+                  <button className="ostaff-btn" onClick={() => setConfirmDelete(null)} disabled={busy}>KEEP</button>
+                  <button className="ostaff-btn danger" onClick={() => deleteBarber(b)} disabled={busy}>{busy ? "DELETING…" : "DELETE BARBER"}</button>
+                </div>
+              </div>
+            ) : editFor === b.id ? (
+              <EditBarberForm barber={b} onCancel={() => setEditFor(null)} onDone={() => setEditFor(null)}/>
             ) : formFor === b.id ? (
               <StaffForm barber={b} onCancel={() => setFormFor(null)} onDone={(c) => { setFormFor(null); setCreated(c); }}/>
             ) : (
               <div className="ostaff-actions">
                 {b.staffUid
-                  ? <button className="ostaff-btn danger" onClick={() => { setConfirmRemove(b.id); setHideOnRemove(true); }}>REMOVE ACCESS</button>
+                  ? <button className="ostaff-btn danger" onClick={() => { setConfirmRemove(b.id); setHideOnRemove(false); }}>REMOVE ACCESS</button>
                   : <button className="ostaff-btn primary" onClick={() => setFormFor(b.id)}>GIVE LOGIN</button>}
                 <button className="ostaff-btn" onClick={() => toggleActive(b)} disabled={busy}>
                   {busy ? "SAVING…" : hidden ? "SHOW IN BOOKING" : "HIDE FROM BOOKING"}
                 </button>
+                <button className="ostaff-btn" onClick={() => { setEditFor(b.id); setConfirmDelete(null); setConfirmRemove(null); }}>EDIT</button>
+                <button className="ostaff-btn danger" onClick={() => { setConfirmDelete(b.id); setEditFor(null); setConfirmRemove(null); }}>DELETE</button>
               </div>
             )}
           </div>
