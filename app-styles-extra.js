@@ -776,4 +776,94 @@ window.appStylesExtra = `
     border-color: rgba(232,194,104,0.35);
     background: rgba(232,194,104,0.08);
   }
+
+  /* ============ STAFF PANEL (owner) ============ */
+  .ostaff { display: flex; flex-direction: column; gap: 12px; }
+  .ostaff-intro {
+    margin: 0; font-size: 12px; line-height: 1.55;
+    color: rgba(244,235,214,0.55);
+  }
+  .ostaff-card {
+    border: 1px solid rgba(244,235,214,0.1);
+    border-radius: 3px; padding: 14px;
+    background: rgba(244,235,214,0.02);
+  }
+  .ostaff-card.hidden { opacity: 0.7; }
+  .ostaff-card-top { display: flex; gap: 12px; align-items: flex-start; }
+  .ostaff-card-main { flex: 1; min-width: 0; }
+  .ostaff-name { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: var(--cream, #f4ebd6); }
+  .ostaff-meta { margin-top: 3px; font-size: 10px; letter-spacing: 0.15em; color: rgba(244,235,214,0.45); }
+  .ostaff-login {
+    margin-top: 8px; font-size: 10px; letter-spacing: 0.12em; font-weight: 700;
+    color: rgba(232,194,104,0.75);
+    display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center;
+    overflow-wrap: anywhere;
+  }
+  .ostaff-login span { color: rgba(244,235,214,0.75); font-weight: 500; letter-spacing: 0.02em; }
+  .ostaff-login .none { color: rgba(244,235,214,0.35); font-weight: 700; letter-spacing: 0.12em; }
+  .ostaff-badge {
+    font-size: 9px; letter-spacing: 0.15em; font-weight: 700;
+    color: rgba(244,235,214,0.6) !important;
+    border: 1px solid rgba(244,235,214,0.2); border-radius: 2px; padding: 2px 6px;
+  }
+  .ostaff-actions, .ostaff-form-actions {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .ostaff-btn {
+    flex: 1; min-height: 40px; padding: 8px 12px;
+    background: transparent; cursor: pointer;
+    border: 1px solid rgba(244,235,214,0.2); border-radius: 2px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; letter-spacing: 0.18em; font-weight: 700;
+    color: rgba(244,235,214,0.75);
+  }
+  .ostaff-btn:disabled { opacity: 0.5; cursor: default; }
+  .ostaff-btn.primary { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .ostaff-btn.danger { border-color: rgba(220,110,90,0.5); color: #e0846f; }
+  .ostaff-confirm {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid rgba(244,235,214,0.08);
+    font-size: 12px; line-height: 1.5; color: rgba(244,235,214,0.75);
+  }
+  .ostaff-check {
+    display: flex; align-items: center; gap: 8px; margin-top: 10px;
+    font-size: 12px; color: rgba(244,235,214,0.7); cursor: pointer;
+  }
+  .ostaff-check input { accent-color: #e8c268; width: 16px; height: 16px; }
+  .ostaff-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .ostaff-card > .ostaff-form { margin-top: 0; }
+  .ostaff-form-title { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; color: #e8c268; }
+  .ostaff-days { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ostaff-day {
+    flex: 1 0 40px; min-height: 36px;
+    background: transparent; cursor: pointer;
+    border: 1px solid rgba(244,235,214,0.18); border-radius: 2px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    color: rgba(244,235,214,0.45);
+  }
+  .ostaff-day.on { background: rgba(232,194,104,0.14); border-color: rgba(232,194,104,0.5); color: #e8c268; }
+  .ostaff-pw { display: flex; gap: 8px; }
+  .ostaff-pw .input { flex: 1; min-width: 0; }
+  .ostaff-pw .ostaff-btn { flex: 0 0 auto; }
+  .ostaff-created {
+    border: 1px solid rgba(232,194,104,0.45); border-radius: 3px;
+    padding: 14px; background: rgba(232,194,104,0.06);
+    font-size: 12px; line-height: 1.5; color: rgba(244,235,214,0.75);
+  }
+  .ostaff-created p { margin: 10px 0 12px; }
+  .ostaff-created-title { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: #e8c268; margin-bottom: 10px; }
+  .ostaff-created-row {
+    display: flex; justify-content: space-between; gap: 10px; padding: 4px 0;
+    overflow-wrap: anywhere;
+  }
+  .ostaff-created-row span { font-size: 10px; letter-spacing: 0.15em; color: rgba(244,235,214,0.45); flex-shrink: 0; }
+  .ostaff-created-row strong { color: var(--cream, #f4ebd6); font-weight: 600; text-align: right; user-select: all; }
+  .ostaff-error { padding: 2px 0; }
+  .ostaff-add {
+    min-height: 48px; cursor: pointer;
+    background: transparent; border: 1px dashed rgba(232,194,104,0.45); border-radius: 3px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; letter-spacing: 0.2em; font-weight: 700; color: #e8c268;
+  }
 `;

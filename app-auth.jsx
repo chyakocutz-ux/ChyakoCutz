@@ -351,7 +351,7 @@ const ForgotPasswordScreen = ({ onBack }) => {
 window.ForgotPasswordScreen = ForgotPasswordScreen;
 
 // ------- OWNER LOGIN -------
-const OwnerLoginScreen = ({ onBack, onSubmit }) => {
+const OwnerLoginScreen = ({ onBack, onStaffSignIn }) => {
   const [code, setCode] = React.useState("");
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
@@ -364,15 +364,14 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
       if (!window.fbFunctions) window.fbFunctions = firebase.functions();
       const fn = window.fbFunctions.httpsCallable("verifyOwnerPasscode");
       const result = await fn({ passcode: code.trim() });
-      await window.fbAuth.signInWithEmailAndPassword(result.data.email, result.data.password);
+      await window.fbAuth.signInWithCustomToken(result.data.token);
     } catch (err) {
       const code = err?.code || "";
       let msg = err?.message || "Login failed — try again";
       if (code === "functions/permission-denied") msg = "Wrong passcode";
       else if (code === "functions/not-found" || code === "functions/unimplemented") msg = "Login service not found — check Functions are deployed";
       else if (code === "functions/internal") msg = "Login service error — check Firebase Function logs";
-      else if (code === "auth/wrong-password" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") msg = "Auth mismatch — OWNER_FB_PASSWORD secret may need updating";
-      else if (code === "auth/user-not-found") msg = "Owner account not set up — run the function once to create it";
+      else if (code === "auth/invalid-custom-token" || code === "auth/custom-token-mismatch") msg = "Login token rejected — check Firebase Function logs";
       setError(msg);
       setLoading(false);
     }
@@ -414,6 +413,11 @@ const OwnerLoginScreen = ({ onBack, onSubmit }) => {
             </span>}
           </button>
         </form>
+
+        <div className="auth-foot">
+          <span>Staff member?</span>
+          <button type="button" className="auth-foot-link" onClick={onStaffSignIn}>Sign in with your email</button>
+        </div>
       </div>
     </div>
   );

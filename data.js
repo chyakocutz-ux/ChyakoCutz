@@ -28,16 +28,33 @@ window.CHYAKO_DATA = {
     { id: "wax",          name: "Waxing — Nose & Ears", price: 6,  mins: 15 },
   ],
 
-  // 3 barbers — workingDayIdx uses Mon=0…Sun=6 to match next14Days dayIdx
+  // Fallback barber list. The live list comes from Firestore `barbers` (managed in the
+  // owner's STAFF tab) and replaces this array at runtime — see app-shell.jsx.
+  // `active: false` hides a barber from booking but keeps their name on old bookings.
+  // workingDayIdx uses Mon=0…Sun=6 to match next14Days dayIdx
   barbers: [
     { id: "b1", name: "Chyako",    role: "Master Barber",  initials: "C",  years: 12, specialty: "Skin Fades & Beard Sculpting", workingDayIdx: [0,1,2,3,4,5,6] },
     { id: "b2", name: "Barber 02", role: "Senior Barber",  initials: "02", years: 7,  specialty: "Scissor Work & Classics",       workingDayIdx: [0,1,2,3,4,5,6] },
     { id: "b3", name: "Barber 03", role: "Barber",         initials: "03", years: 4,  specialty: "Modern Cuts & Tapers",          workingDayIdx: [4,5,6] },
   ],
 
+  activeBarbers: function() {
+    return this.barbers.filter(b => b.active !== false);
+  },
+
+  workingDaysLabel: function(idx) {
+    if (!idx || idx.length >= 7) return "";
+    const names = ["MON","TUE","WED","THU","FRI","SAT","SUN"];
+    const s = [...idx].sort((a, b) => a - b);
+    const contiguous = s.every((d, i) => i === 0 || d === s[i - 1] + 1);
+    if (contiguous && s.length > 2) return `${names[s[0]]} – ${names[s[s.length - 1]]} ONLY`;
+    return s.map(d => names[d]).join(" · ") + " ONLY";
+  },
+
   isBarberAvailableOn: function(barberId, dateStr, daysOff) {
     if (!dateStr || barberId === "any") return true;
     const barber = this.barbers.find(b => b.id === barberId);
+    if (barber && barber.active === false) return false;
     if (!barber?.workingDayIdx) return true;
     const dow = (new Date(dateStr + "T12:00:00").getDay() + 6) % 7; // Mon=0…Sun=6
     if (!barber.workingDayIdx.includes(dow)) return false;
@@ -46,8 +63,8 @@ window.CHYAKO_DATA = {
   },
 
   getAvailableBarbers: function(dateStr, daysOff) {
-    if (!dateStr) return this.barbers;
-    return this.barbers.filter(b => this.isBarberAvailableOn(b.id, dateStr, daysOff));
+    if (!dateStr) return this.activeBarbers();
+    return this.activeBarbers().filter(b => this.isBarberAvailableOn(b.id, dateStr, daysOff));
   },
 
   hours: [

@@ -1,8 +1,13 @@
 // OWNER DASHBOARD — master view of every booking + workload management.
-// Two segments: SCHEDULE (day-by-day agenda) and ALL BOOKINGS (full upcoming list).
+// Segments: SCHEDULE (day-by-day agenda), ALL BOOKINGS (full upcoming list), STAFF (owner only).
+// mode="staff" reuses this screen for a single barber: only their chair, their days off.
 
-const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayOff, onRemoveDayOff, onSignOut }) => {
+const OwnerDashboard = ({ mode = "owner", staffBarberId, staffName, barbers, allBookings: rawBookings, daysOff, onSetStatus, onDelete, onAddDayOff, onRemoveDayOff, onSignOut }) => {
   const D = window.CHYAKO_DATA;
+  const isStaff = mode === "staff";
+  const allBookings = isStaff ? rawBookings.filter(b => b.barberId === staffBarberId) : rawBookings;
+  const shopBarbers = (barbers || D.barbers);
+  const myBarbers = isStaff ? shopBarbers.filter(b => b.id === staffBarberId) : shopBarbers.filter(b => b.active !== false);
   const days = React.useMemo(() => D.next14Days(), []);
   const [seg, setSeg] = React.useState("schedule"); // schedule | all
   const [selectedIso, setSelectedIso] = React.useState(days[0].iso);
@@ -25,7 +30,7 @@ const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayO
 
   const dayActive = allBookings.filter(b => b.dateIso === selectedIso && b.status !== "cancelled");
   const chairValue = dayActive.reduce((s, b) => s + (b.dueAtChair ?? b.total ?? 0), 0);
-  const barbeCountOn = D.barbers.filter(b => {
+  const barbeCountOn = myBarbers.filter(b => {
     if (!D.isBarberAvailableOn(b.id, selectedIso, daysOff)) return false;
     return true;
   }).length;
@@ -91,7 +96,7 @@ const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayO
       {/* TOPBAR */}
       <div className="owner-topbar">
         <div>
-          <div className="owner-eyebrow"><span className="owner-key">⚿</span> MASTER DASHBOARD</div>
+          <div className="owner-eyebrow"><span className="owner-key">⚿</span> {isStaff ? `STAFF · ${(staffName || "BARBER").toUpperCase()}` : "MASTER DASHBOARD"}</div>
           <div className="owner-brand">CHYAKO<span>//CUTZ · SM1</span></div>
         </div>
         <button className="owner-signout" onClick={onSignOut} aria-label="Sign out">
@@ -105,7 +110,8 @@ const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayO
       {/* SEGMENTED */}
       <div className="owner-seg">
         <button className={`oseg ${seg === "schedule" ? "on" : ""}`} onClick={() => setSeg("schedule")}>SCHEDULE</button>
-        <button className={`oseg ${seg === "all" ? "on" : ""}`} onClick={() => setSeg("all")}>ALL BOOKINGS</button>
+        <button className={`oseg ${seg === "all" ? "on" : ""}`} onClick={() => setSeg("all")}>{isStaff ? "MY BOOKINGS" : "ALL BOOKINGS"}</button>
+        {!isStaff && <button className={`oseg ${seg === "staff" ? "on" : ""}`} onClick={() => setSeg("staff")}>STAFF</button>}
       </div>
 
       <div className="owner-body">
@@ -138,27 +144,27 @@ const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayO
                 <div className="ostat-label">CHAIR VALUE</div>
               </div>
               <div className="ostat">
-                <div className="ostat-num">{barbeCountOn}</div>
-                <div className="ostat-label">BARBERS ON</div>
+                <div className="ostat-num">{isStaff ? (barbeCountOn ? "ON" : "OFF") : barbeCountOn}</div>
+                <div className="ostat-label">{isStaff ? "YOUR DAY" : "BARBERS ON"}</div>
               </div>
             </div>
 
             {/* BARBER FILTER */}
-            <div className="obarbers">
+            {!isStaff && <div className="obarbers">
               <button className={`obarber ${barberFilter === "all" ? "on" : ""}`} onClick={() => setBarberFilter("all")}>
                 ALL <span className="obarber-c">{barberCount("all")}</span>
               </button>
-              {D.barbers.map(b => (
+              {myBarbers.map(b => (
                 <button key={b.id} className={`obarber ${barberFilter === b.id ? "on" : ""}`} onClick={() => setBarberFilter(b.id)}>
                   {b.name.toUpperCase()} <span className="obarber-c">{barberCount(b.id)}</span>
                 </button>
               ))}
-            </div>
+            </div>}
 
             {/* DAYS OFF */}
             <div className="odaysoff-section">
-              <div className="odaysoff-label">DAYS OFF</div>
-              {D.barbers.map(b => {
+              <div className="odaysoff-label">{isStaff ? "YOUR DAY OFF" : "DAYS OFF"}</div>
+              {myBarbers.map(b => {
                 const isOff = (daysOff || []).some(x => x.barberId === b.id && x.dateIso === selectedIso);
                 return (
                   <button
@@ -210,6 +216,8 @@ const OwnerDashboard = ({ allBookings, daysOff, onSetStatus, onDelete, onAddDayO
             )}
           </>
         )}
+
+        {seg === "staff" && !isStaff && <window.StaffPanel barbers={shopBarbers}/>}
       </div>
     </div>
   );

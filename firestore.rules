@@ -2,41 +2,61 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Users can only read/write their own profile
+    function signedIn() { return request.auth != null; }
+    function me()       { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isOwner()  { return signedIn() && me().role == "owner"; }
+    function isStaff()  { return signedIn() && me().role == "staff"; }
+    function myBarber() { return me().barberId; }
+
+    // Profiles — users manage their own, but can never set their own role or barber link.
+    // Owner/staff profiles are created only by Cloud Functions.
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if signedIn() && (request.auth.uid == uid || isOwner());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role == "customer"
+        && !("barberId" in request.resource.data);
+      allow update: if signedIn() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(["role", "barberId"]);
+      allow delete: if false;
+    }
+
+    // Barbers — public list for the booking screen; edited only through Cloud Functions
+    match /barbers/{barberId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Server-only settings (owner passcode fingerprint)
+    match /config/{docId} {
+      allow read, write: if false;
     }
 
     // Bookings — any authenticated user can read (needed for slot availability checks)
     match /bookings/{bookingId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && (
-        request.resource.data.uid == request.auth.uid ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+      allow read: if signedIn();
+      allow create: if signedIn() && (
+        request.resource.data.uid == request.auth.uid || isOwner()
       );
-      allow update: if request.auth != null && (
+      allow update: if signedIn() && (
         request.auth.uid == resource.data.uid ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
+        isOwner() ||
+        (isStaff() && resource.data.barberId == myBarber() && request.resource.data.barberId == myBarber())
       );
       allow delete: if false;
     }
 
-    // Days off — owner can write, any authenticated user can read (needed for slot availability)
+    // Days off — owner for anyone, staff only for their own chair
     match /daysOff/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner";
+      allow read: if signedIn();
+      allow create, update: if isOwner() || (isStaff() && request.resource.data.barberId == myBarber());
+      allow delete: if isOwner() || (isStaff() && resource.data.barberId == myBarber());
     }
 
-    // Notifications — owner_inbox for shop alerts, {uid} for customer alerts
+    // Notifications — owner_inbox for shop alerts, {uid} for personal alerts
     match /notifications/{docId}/items/{itemId} {
-      allow create: if request.auth != null && (
-        docId == "owner_inbox" ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner"
-      );
-      allow read, update: if request.auth != null && (
-        (docId == "owner_inbox" &&
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "owner") ||
+      allow create: if signedIn() && (docId == "owner_inbox" || isOwner() || isStaff());
+      allow read, update: if signedIn() && (
+        (docId == "owner_inbox" && isOwner()) ||
         docId == request.auth.uid
       );
     }

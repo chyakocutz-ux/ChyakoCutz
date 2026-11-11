@@ -127,7 +127,7 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
         {step === 1 && (
           <div className="step">
             <div className="step-intro">CHOOSE YOUR BLADE.</div>
-            {D.barbers.map((b, i) => (
+            {D.activeBarbers().map((b, i) => (
               <button key={b.id} className={`barber ${selectedBarber === b.id ? "checked" : ""}`} onClick={() => handleSelectBarber(b.id)}>
                 <div className="barber-avatar">
                   <span className="barber-init">{b.initials}</span>
@@ -140,7 +140,7 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
                   {b.workingDayIdx && b.workingDayIdx.length < 7 && (
                     <div style={{ marginTop: 6, display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", letterSpacing: "0.15em", fontWeight: 600, color: "rgba(232,194,104,0.68)", border: "1px solid rgba(232,194,104,0.2)", borderRadius: 2, padding: "2px 7px" }}>
                       <svg width="9" height="9" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}><circle cx="5" cy="5" r="4" stroke="rgba(232,194,104,0.68)" strokeWidth="1.5"/><path d="M5 2.5V5l1.5 1.5" stroke="rgba(232,194,104,0.68)" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                      FRI – SUN ONLY
+                      {D.workingDaysLabel(b.workingDayIdx)}
                     </div>
                   )}
                 </div>

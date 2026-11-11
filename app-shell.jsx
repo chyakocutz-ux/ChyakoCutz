@@ -23,6 +23,8 @@ const AppShell = () => {
   const [bookings, setBookings] = React.useState([]);
   const [allBookings, setAllBookings] = React.useState([]);
   const [daysOff, setDaysOff] = React.useState([]);
+  const [barbers, setBarbers] = React.useState(window.CHYAKO_DATA.barbers);
+  const [barbersEmpty, setBarbersEmpty] = React.useState(false);
   const [listenerError, setListenerError] = React.useState(false);
   const [toasts, setToasts] = React.useState([]);
   const [showNotifPrompt, setShowNotifPrompt] = React.useState(false);
@@ -41,7 +43,13 @@ const AppShell = () => {
       try {
         const snap = await window.fbDb.collection("users").doc(firebaseUser.uid).get();
         if (snap.exists) {
-          setUser({ uid: firebaseUser.uid, ...snap.data() });
+          const profile = snap.data();
+          if (profile.role === "former_staff") {
+            // Access was removed by the owner — never let a stale session back in
+            window.fbAuth.signOut();
+            return;
+          }
+          setUser({ uid: firebaseUser.uid, ...profile });
         } else {
           // No Firestore profile yet — detect owner by reserved email as fallback
           const role = firebaseUser.email === "owner@chyakocutz.internal" ? "owner" : "customer";
@@ -62,6 +70,8 @@ const AppShell = () => {
     let query;
     if (user.role === "owner") {
       query = window.fbDb.collection("bookings").orderBy("createdAt", "desc");
+    } else if (user.role === "staff") {
+      query = window.fbDb.collection("bookings").where("barberId", "==", user.barberId || "__none__");
     } else {
       query = window.fbDb.collection("bookings")
         .where("uid", "==", user.uid);
@@ -103,6 +113,33 @@ const AppShell = () => {
     return unsub;
   }, [user?.uid]);
 
+  // Barbers listener — live list managed from the owner's STAFF tab.
+  // Falls back to the built-in list in data.js if the collection is empty or unreadable.
+  React.useEffect(() => {
+    const D = window.CHYAKO_DATA;
+    const fallback = D.barbers;
+    const unsub = window.fbDb.collection("barbers").onSnapshot(
+      (snap) => {
+        if (snap.empty) { setBarbersEmpty(true); return; }
+        const list = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+        D.barbers = list;
+        setBarbersEmpty(false);
+        setBarbers(list);
+      },
+      () => { D.barbers = fallback; }
+    );
+    return unsub;
+  }, []);
+
+  // First owner login after this update: copy the built-in barbers into Firestore
+  React.useEffect(() => {
+    if (!barbersEmpty || user?.role !== "owner") return;
+    window.fbFunctions.httpsCallable("seedBarbers")({ barbers: window.CHYAKO_DATA.barbers })
+      .catch(err => console.error("seedBarbers failed:", err));
+  }, [barbersEmpty, user?.role]);
+
   // Notification listener — shows toasts for new unread notifications
   React.useEffect(() => {
     if (!user?.uid) return;
@@ -143,9 +180,9 @@ const AppShell = () => {
       .catch(() => {});
   }, [user?.uid]);
 
-  // Show permission prompt to owner on first dashboard load
+  // Show permission prompt to owner/staff on first dashboard load
   React.useEffect(() => {
-    if (!user?.uid || user.role !== "owner") return;
+    if (!user?.uid || (user.role !== "owner" && user.role !== "staff")) return;
     if (localStorage.getItem("notif_asked")) return;
     if (window.Notification?.permission !== "default") return;
     const t = setTimeout(() => setShowNotifPrompt(true), 1400);
@@ -233,7 +270,7 @@ const AppShell = () => {
     window.fbDb.collection("bookings").doc(id).update({ dateIso, slot });
 
   const setBookingStatus = async (id, status) => {
-    const extra = status === "cancelled" ? { cancelledBy: "owner" } : {};
+    const extra = status === "cancelled" ? { cancelledBy: user.role === "staff" ? "shop" : "owner" } : {};
     await window.fbDb.collection("bookings").doc(id).update({ status, ...extra });
     if (status === "cancelled") {
       const booking = bookings.find(b => b.id === id);
@@ -285,6 +322,7 @@ const AppShell = () => {
     if (authScreen === "owner") {
       return <window.OwnerLoginScreen
         onBack={() => setAuthScreen("welcome")}
+        onStaffSignIn={() => setAuthScreen("signin")}
       />;
     }
     return <window.WelcomeScreen
@@ -308,7 +346,7 @@ const AppShell = () => {
     </div>
   );
 
-  const isOwner = user?.role === "owner";
+  const isOwner = user?.role === "owner" || user?.role === "staff";
   const NotifPrompt = () => !showNotifPrompt ? null : (
     <>
       <div className="notif-overlay" onClick={dismissNotifPrompt}/>
@@ -333,11 +371,15 @@ const AppShell = () => {
     </>
   );
 
-  // ---------- OWNER DASHBOARD ----------
-  if (user.role === "owner") {
+  // ---------- OWNER / STAFF DASHBOARD ----------
+  if (user.role === "owner" || user.role === "staff") {
     return (
       <>
         <window.OwnerDashboard
+          mode={user.role}
+          staffBarberId={user.barberId}
+          staffName={user.name}
+          barbers={barbers}
           allBookings={bookings}
           daysOff={daysOff}
           onSetStatus={setBookingStatus}
