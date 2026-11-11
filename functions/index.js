@@ -5,6 +5,8 @@ const crypto    = require("crypto");
 admin.initializeApp();
 const db = admin.firestore();
 const { HttpsError } = functions.https;
+const mail = require("./emails");
+const withEmail = functions.runWith({ secrets: ["RESEND_API_KEY"] });
 
 const OWNER_EMAIL = "owner@chyakocutz.internal";
 
@@ -97,19 +99,41 @@ async function notifyStaff(barberId, type, title, body, bookingId) {
 
 // ---------- booking triggers ----------
 
-// New booking → alert the owner and the barber's staff account
-exports.onBookingCreated = functions.firestore
+// Barber display name + the email of their staff login (if any), for emails
+async function barberInfo(barberId) {
+  if (!barberId || barberId === "any") return { name: null, staffEmail: null };
+  const doc = await db.collection("barbers").doc(barberId).get();
+  const b = doc.exists ? doc.data() : {};
+  let staffEmail = null;
+  if (b.staffUid) {
+    const u = await db.collection("users").doc(b.staffUid).get();
+    if (u.exists && u.data().role === "staff") staffEmail = u.data().email || null;
+  }
+  return { name: b.name || null, staffEmail };
+}
+
+// Run a side effect without letting its failure stop the others
+const safely = (label, fn) => fn().catch(err => console.error(label, "failed:", err.message));
+
+// New booking → confirmation email to the customer, copy to shop + barber, push to owner/staff
+exports.onBookingCreated = withEmail.firestore
   .document("bookings/{bookingId}")
   .onCreate(async (snap) => {
     const b = snap.data();
+    const barber = await barberInfo(b.barberId);
+    const confirm = mail.bookingConfirmed(b, barber.name);
+    const notice = mail.shopNotice("new", b, barber.name);
     const body = `${b.customer?.name || "A customer"} booked ${b.slot} on ${b.dateIso}.`;
-    const ownerUid = await getOwnerUid();
-    if (ownerUid) await sendPush(ownerUid, "New Booking", body, snap.id);
-    await notifyStaff(b.barberId, "new_booking", "New Booking", body, snap.id);
+    await Promise.all([
+      safely("customer confirmation email", () => mail.sendEmail({ to: b.customer?.email, ...confirm })),
+      safely("shop booking email", () => mail.sendEmail({ to: [mail.SHOP_EMAIL, barber.staffEmail], ...notice })),
+      safely("owner push", async () => { const ownerUid = await getOwnerUid(); if (ownerUid) await sendPush(ownerUid, "New Booking", body, snap.id); }),
+      safely("staff notify", () => notifyStaff(b.barberId, "new_booking", "New Booking", body, snap.id)),
+    ]);
   });
 
-// Status change → alert the right party
-exports.onBookingUpdated = functions.firestore
+// Cancellation → email the customer; if the customer cancelled, also tell the shop + barber
+exports.onBookingUpdated = withEmail.firestore
   .document("bookings/{bookingId}")
   .onUpdate(async (change) => {
     const before = change.before.data();
@@ -117,19 +141,23 @@ exports.onBookingUpdated = functions.firestore
 
     if (before.status === after.status || after.status !== "cancelled") return;
 
+    const barber = await barberInfo(after.barberId);
+    const id = change.after.id;
+    const jobs = [
+      safely("customer cancel email", () => mail.sendEmail({ to: after.customer?.email, ...mail.bookingCancelled(after, barber.name) })),
+    ];
+
     if (after.cancelledBy === "owner" || after.cancelledBy === "shop") {
-      await sendPush(
-        after.uid,
-        "Booking Cancelled",
-        `Your ${after.slot} on ${after.dateIso} was cancelled by the shop.`,
-        change.after.id
-      );
+      jobs.push(safely("customer push", () => sendPush(after.uid, "Booking Cancelled", `Your ${after.slot} on ${after.dateIso} was cancelled by the shop.`, id)));
     } else if (after.cancelledBy === "customer") {
       const body = `${after.customer?.name || "A customer"} cancelled their ${after.slot} on ${after.dateIso}.`;
-      const ownerUid = await getOwnerUid();
-      if (ownerUid) await sendPush(ownerUid, "Booking Cancelled", body, change.after.id);
-      await notifyStaff(after.barberId, "cancelled_by_customer", "Booking Cancelled", body, change.after.id);
+      jobs.push(
+        safely("shop cancel email", () => mail.sendEmail({ to: [mail.SHOP_EMAIL, barber.staffEmail], ...mail.shopNotice("cancelled", after, barber.name) })),
+        safely("owner push", async () => { const ownerUid = await getOwnerUid(); if (ownerUid) await sendPush(ownerUid, "Booking Cancelled", body, id); }),
+        safely("staff notify", () => notifyStaff(after.barberId, "cancelled_by_customer", "Booking Cancelled", body, id)),
+      );
     }
+    await Promise.all(jobs);
   });
 
 // ---------- owner login ----------
@@ -208,7 +236,7 @@ exports.updateBarber = functions.https.onCall(async (data, context) => {
 });
 
 // Create a personal login for a staff member, linked to a barber chair
-exports.createStaff = functions.https.onCall(async (data, context) => {
+exports.createStaff = withEmail.https.onCall(async (data, context) => {
   await assertOwner(context);
   const name = str(data?.name, 40);
   const email = str(data?.email, 120).toLowerCase();
@@ -244,7 +272,17 @@ exports.createStaff = functions.https.onCall(async (data, context) => {
     createdAt: admin.firestore.FieldValue.serverTimestamp()
   });
   await barberRef.update({ staffUid: userRecord.uid, active: true });
-  return { uid: userRecord.uid, barberId: barberRef.id };
+
+  // Welcome email with a link to choose their own password
+  let emailSent = false;
+  try {
+    const link = await admin.auth().generatePasswordResetLink(email, { url: "https://www.chyakocutz.com" });
+    const sent = await mail.sendEmail({ to: email, ...mail.staffWelcome(name, email, link) });
+    emailSent = sent.ok;
+  } catch (err) {
+    console.error("staff welcome email failed:", err.message);
+  }
+  return { uid: userRecord.uid, barberId: barberRef.id, emailSent };
 });
 
 // Remove a staff member's access: disable login, sign out all their devices

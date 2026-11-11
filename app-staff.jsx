@@ -40,7 +40,7 @@ const StaffForm = ({ barber, onDone, onCancel }) => {
     if (isNew && days.length === 0) return setError("Pick at least one working day");
     setBusy(true);
     try {
-      await callFn("createStaff", {
+      const res = await callFn("createStaff", {
         name: name.trim(),
         email: email.trim(),
         tempPassword: password,
@@ -48,7 +48,7 @@ const StaffForm = ({ barber, onDone, onCancel }) => {
           ? { newBarber: { name: name.trim(), role: title.trim() || "Barber", workingDayIdx: days } }
           : { barberId: barber.id })
       });
-      onDone({ name: name.trim(), email: email.trim().toLowerCase(), password });
+      onDone({ name: name.trim(), email: email.trim().toLowerCase(), password, emailSent: !!res?.emailSent });
     } catch (err) {
       setError(errMsg(err));
       setBusy(false);
@@ -150,8 +150,14 @@ const StaffPanel = ({ barbers }) => {
         <div className="ostaff-created">
           <div className="ostaff-created-title">LOGIN CREATED FOR {created.name.toUpperCase()}</div>
           <div className="ostaff-created-row"><span>EMAIL</span><strong>{created.email}</strong></div>
-          <div className="ostaff-created-row"><span>TEMP PASSWORD</span><strong>{created.password}</strong></div>
-          <p>Send these to them. They tap <b>OWNER / STAFF ACCESS → Sign in with your email</b>, then use <b>Forgot password?</b> to set their own.</p>
+          {created.emailSent ? (
+            <p>We've emailed {created.name} a link to set their own password, with sign-in steps. Ask them to check their spam folder if it hasn't arrived in a few minutes.</p>
+          ) : (
+            <>
+              <div className="ostaff-created-row"><span>TEMP PASSWORD</span><strong>{created.password}</strong></div>
+              <p>The welcome email couldn't be sent, so pass these on yourself. They tap <b>OWNER / STAFF ACCESS → Sign in with your email</b>, then use <b>Forgot password?</b> to set their own.</p>
+            </>
+          )}
           <button className="ostaff-btn" onClick={() => setCreated(null)}>DONE</button>
         </div>
       )}
