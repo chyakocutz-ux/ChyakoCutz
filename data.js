@@ -35,7 +35,7 @@ window.CHYAKO_DATA = {
   barbers: [
     { id: "b1", name: "Chyako",    role: "Master Barber",  initials: "C",  years: 12, specialty: "Skin Fades & Beard Sculpting", workingDayIdx: [0,1,2,3,4,5,6] },
     { id: "b2", name: "Barber 02", role: "Senior Barber",  initials: "02", years: 7,  specialty: "Scissor Work & Classics",       workingDayIdx: [0,1,2,3,4,5,6] },
-    { id: "b3", name: "Barber 03", role: "Barber",         initials: "03", years: 4,  specialty: "Modern Cuts & Tapers",          workingDayIdx: [4,5,6] },
+    { id: "b3", name: "Barber 03", role: "Barber",         initials: "03", years: 4,  specialty: "Modern Cuts & Tapers",          workingDayIdx: [0,1,2,3,4,5,6] },
   ],
 
   activeBarbers: function() {

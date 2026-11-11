@@ -161,11 +161,11 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
         {step === 2 && (
           <div className="step">
             <div className="step-intro">WHEN ARE YOU PULLING UP?</div>
-            {selectedBarber === "b3" && (
+            {barberObj && D.workingDaysLabel(barberObj.workingDayIdx) && (
               <div style={{ marginBottom: 12 }}>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "11px", letterSpacing: "0.15em", fontWeight: 600, color: "rgba(232,194,104,0.82)", background: "rgba(232,194,104,0.07)", border: "1px solid rgba(232,194,104,0.2)", borderRadius: 2, padding: "5px 10px" }}>
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}><circle cx="5" cy="5" r="4" stroke="rgba(232,194,104,0.82)" strokeWidth="1.5"/><path d="M5 2.5V5l1.5 1.5" stroke="rgba(232,194,104,0.82)" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                  BARBER 03 · AVAILABLE FRI – SUN
+                  {barberObj.name.toUpperCase()} · AVAILABLE {D.workingDaysLabel(barberObj.workingDayIdx)}
                 </div>
               </div>
             )}
