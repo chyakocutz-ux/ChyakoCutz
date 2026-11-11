@@ -25,8 +25,9 @@ const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
 
   return (
     <div className="screen">
-      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <img className="welcome-bg-video" src="assets/brand/parlour.jpg" alt=""/>
       <div className="welcome-veil"/>
+      <window.GildedFrame/>
 
       <div className="welcome-body welcome-body-logo">
         <div>
@@ -39,8 +40,11 @@ const WelcomeScreen = ({ onSignUp, onSignIn, onOwner }) => {
           </div>
         </div>
 
-        {/* Logo image carries the wordmark — no overlay text */}
-        <div/>
+        <div className="gwelcome-mid">
+          <window.Fleur/>
+          <window.GoldLogo className="gwelcome-logo"/>
+          <p className="gwelcome-line gt">Take a seat.<br/>We'll do the rest.</p>
+        </div>
 
         <div>
           <div className="welcome-actions">
@@ -108,14 +112,14 @@ const SignUpScreen = ({ onBack, onSwitchToSignIn }) => {
 
   return (
     <div className="screen">
-      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <img className="welcome-bg-video" src="assets/brand/parlour.jpg" alt=""/>
       <div className="welcome-veil"/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
-          <div className="auth-mark">CHYAKO//CUTZ</div>
+          <window.GoldLogo className="auth-logo"/>
           <div style={{ width: 44 }}/>
         </div>
 
@@ -205,14 +209,14 @@ const SignInScreen = ({ onBack, onSwitchToSignUp, onForgotPassword }) => {
 
   return (
     <div className="screen">
-      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <img className="welcome-bg-video" src="assets/brand/parlour.jpg" alt=""/>
       <div className="welcome-veil"/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
-          <div className="auth-mark">CHYAKO//CUTZ</div>
+          <window.GoldLogo className="auth-logo"/>
           <div style={{ width: 44 }}/>
         </div>
 
@@ -286,25 +290,25 @@ const ForgotPasswordScreen = ({ onBack }) => {
 
   return (
     <div className="screen">
-      <img className="welcome-bg-video" src="assets/boot.jpg" alt=""/>
+      <img className="welcome-bg-video" src="assets/brand/parlour.jpg" alt=""/>
       <div className="welcome-veil"/>
       <div className="auth">
         <div className="auth-head">
           <button className="back-btn" onClick={onBack} aria-label="Back">
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
-          <div className="auth-mark">CHYAKO//CUTZ</div>
+          <window.GoldLogo className="auth-logo"/>
           <div style={{ width: 44 }}/>
         </div>
 
         {sent ? (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, padding: "0 8px" }}>
             <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-              <circle cx="28" cy="28" r="27" stroke="#e8c268" strokeWidth="1.5"/>
-              <path d="M17 28l8 8 14-16" stroke="#e8c268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="28" cy="28" r="27" stroke="#d9b25c" strokeWidth="1.5"/>
+              <path d="M17 28l8 8 14-16" stroke="#d9b25c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <h1 className="auth-title" style={{ textAlign: "center", fontSize: "clamp(28px, 8vw, 42px)" }}>CHECK YOUR<br/><span>INBOX.</span></h1>
-            <p className="auth-sub" style={{ textAlign: "center" }}>A reset link is on its way to <strong style={{ color: "#e8c268", fontWeight: 600 }}>{email.trim()}</strong>. Follow the link to set a new password.</p>
+            <p className="auth-sub" style={{ textAlign: "center" }}>A reset link is on its way to <strong style={{ color: "#d9b25c", fontWeight: 600 }}>{email.trim()}</strong>. Follow the link to set a new password.</p>
             <div className="auth-foot" style={{ marginTop: 8 }}>
               <button type="button" className="auth-foot-link" onClick={onBack}>Back to sign in</button>
             </div>
@@ -384,7 +388,7 @@ const OwnerLoginScreen = ({ onBack, onStaffSignIn }) => {
           <button className="back-btn" onClick={onBack} aria-label="Back">
             <svg width="14" height="10" viewBox="0 0 14 10"><path d="M14 5H1M5 1L1 5l4 4" stroke="currentColor" strokeWidth="1.6" fill="none"/></svg>
           </button>
-          <div className="auth-mark">CHYAKO//CUTZ</div>
+          <window.GoldLogo className="auth-logo"/>
           <div style={{ width: 44 }}/>
         </div>
 

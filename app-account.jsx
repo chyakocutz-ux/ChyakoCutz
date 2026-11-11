@@ -15,7 +15,7 @@ const AccountTab = ({ user, bookings, onSignOut }) => {
       <section className="hero">
         <div className="hero-greet">★ YOUR ACCOUNT</div>
         <h1 className="hero-title">
-          ME<span style={{ color: '#e8c268' }}>.</span>
+          ME<span style={{ color: '#d9b25c' }}>.</span>
         </h1>
       </section>
 

@@ -17,7 +17,7 @@ const BookingsTab = ({ bookings, onBook, onManage }) => {
       <section className="hero">
         <div className="hero-greet">★ YOUR CHAIRS</div>
         <h1 className="hero-title">
-          BOOKINGS<span style={{ color: '#e8c268' }}>.</span>
+          BOOKINGS<span style={{ color: '#d9b25c' }}>.</span>
         </h1>
       </section>
 

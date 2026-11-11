@@ -11,7 +11,14 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "functions/**"
+      "functions/**",
+      "design-lab.html",
+      "gilded-lab.html",
+      "assets/lab/**",
+      "_preview.html",
+      "_shot.html",
+      "DESIGN.md",
+      "PRODUCT.md"
     ],
     "rewrites": [
       {

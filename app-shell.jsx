@@ -353,8 +353,8 @@ const AppShell = () => {
       <div className="notif-prompt">
         <div className="notif-prompt-icon">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#e8c268" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#e8c268" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#d9b25c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#d9b25c" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </div>
         <div className="notif-prompt-title">STAY UPDATED</div>
@@ -401,7 +401,8 @@ const AppShell = () => {
     : null;
 
   return (
-    <div className="app">
+    <div className={`app tab-${tab}`}>
+      <window.GildedFrame/>
       {listenerError && (
         <div className="listener-error-banner">
           Couldn't load bookings — check your connection.
@@ -411,10 +412,7 @@ const AppShell = () => {
       {/* TOPBAR */}
       <div className="topbar">
         <div className="topbar-l">
-          <div>
-            <div className="topbar-brand">CHYAKO</div>
-            <div className="topbar-sub">CUTZ / SM1</div>
-          </div>
+          <window.GoldLogo className="topbar-logo"/>
         </div>
         <button className="topbar-avatar" onClick={() => setTab("account")} aria-label="Account">
           {(user.name?.[0] || "U").toUpperCase()}
@@ -426,10 +424,10 @@ const AppShell = () => {
           <window.HomeTab
             user={user}
             upcoming={upcoming}
-            bookings={bookings}
-            onBook={() => setSheet({ type: "book" })}
+            allBookings={allBookings}
+            daysOff={daysOff}
+            onBook={(prefill) => setSheet({ type: "book", prefill })}
             onManage={(id) => setSheet({ type: "manage", id })}
-            onSeeAll={() => setTab("bookings")}
           />
         )}
         {tab === "bookings" && (
@@ -460,7 +458,7 @@ const AppShell = () => {
         </button>
         <button className="bnav-item bnav-book" onClick={() => setSheet({ type: "book" })} aria-label="Book">
           <span className="bnav-book-pill">
-            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="2"/></svg>
+            <window.GIcon name="scissors" sw={1.8} size={22}/>
           </span>
           BOOK
         </button>
@@ -488,6 +486,7 @@ const AppShell = () => {
       {sheet?.type === "book" && (
         <window.BookSheet
           user={user}
+          prefill={sheet.prefill}
           bookings={allBookings}
           userBookings={bookings}
           daysOff={daysOff}

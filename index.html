@@ -14,14 +14,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=Inter:wght@300;400;500;600;700&display=swap" />
 
   <style>
     html, body {
       margin: 0; padding: 0;
       background: #000;
       min-height: 100vh;
-      font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       color: #f4ebd6;
       overflow: hidden;
     }
@@ -39,14 +39,14 @@
       animation: boot-fade 0.7s ease both;
     }
     .boot-name {
-      font-family: 'Pirata One', serif;
+      font-family: 'Cinzel', serif;
       font-size: 34px;
       letter-spacing: 0.08em;
-      color: #e8c268;
+      color: #d9b25c;
       animation: boot-fade 0.7s ease 0.1s both;
     }
     .boot-sub {
-      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 11px;
       letter-spacing: 0.22em;
       color: rgba(232,194,104,0.45);
@@ -57,7 +57,7 @@
     .boot-spinner {
       width: 26px; height: 26px;
       border: 1.5px solid rgba(232, 194, 104, 0.15);
-      border-top-color: #e8c268;
+      border-top-color: #d9b25c;
       border-radius: 50%;
       animation: bspin 0.9s linear infinite;
     }
@@ -85,23 +85,25 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
-  <script src="firebase-config.js?v=20261111e"></script>
+  <script src="firebase-config.js?v=20261111g"></script>
 
   <!-- Data + Styles -->
-  <script src="data.js?v=20261111e"></script>
-  <script src="app-styles.js?v=20261111e"></script>
-  <script src="app-styles-extra.js?v=20261111e"></script>
-  <script src="app-styles-desktop.js?v=20261111e"></script>
+  <script src="data.js?v=20261111g"></script>
+  <script src="app-styles.js?v=20261111g"></script>
+  <script src="app-styles-extra.js?v=20261111g"></script>
+  <script src="app-styles-desktop.js?v=20261111g"></script>
+  <script src="app-styles-gilded.js?v=20261111g"></script>
 
   <!-- App pieces (order matters — shell last) -->
-  <script type="text/babel" src="app-auth.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-home.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-bookings.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-account.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-book-sheet.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-owner.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-staff.jsx?v=20261111e"></script>
-  <script type="text/babel" src="app-shell.jsx?v=20261111e"></script>
+  <script type="text/babel" src="app-auth.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-gilded.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-home.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-bookings.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-account.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-book-sheet.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-owner.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-staff.jsx?v=20261111g"></script>
+  <script type="text/babel" src="app-shell.jsx?v=20261111g"></script>
 
   <script type="text/babel">
     class ErrorBoundary extends React.Component {
@@ -110,11 +112,11 @@
       render() {
         if (this.state.err) {
           return (
-            <div style={{ position:'fixed', inset:0, background:'#0a0806', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px', textAlign:'center', fontFamily:'Space Grotesk, sans-serif' }}>
+            <div style={{ position:'fixed', inset:0, background:'#0a0806', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px', textAlign:'center', fontFamily:'Inter, sans-serif' }}>
               <div style={{ fontSize:32, marginBottom:12 }}>✂</div>
-              <div style={{ color:'#e8c268', fontWeight:700, fontSize:13, letterSpacing:'0.15em', marginBottom:8 }}>SOMETHING WENT WRONG</div>
+              <div style={{ color:'#d9b25c', fontWeight:700, fontSize:13, letterSpacing:'0.15em', marginBottom:8 }}>SOMETHING WENT WRONG</div>
               <div style={{ color:'rgba(244,235,214,0.55)', fontSize:12, marginBottom:28, maxWidth:260 }}>{this.state.err.message}</div>
-              <button onClick={() => window.location.reload()} style={{ background:'#e8c268', color:'#000', border:'none', padding:'12px 28px', borderRadius:100, fontFamily:'Space Grotesk,sans-serif', fontWeight:700, fontSize:12, letterSpacing:'0.15em', cursor:'pointer' }}>RELOAD APP</button>
+              <button onClick={() => window.location.reload()} style={{ background:'#d9b25c', color:'#000', border:'none', padding:'12px 28px', borderRadius:100, fontFamily:'Inter,sans-serif', fontWeight:700, fontSize:12, letterSpacing:'0.15em', cursor:'pointer' }}>RELOAD APP</button>
             </div>
           );
         }
@@ -127,6 +129,7 @@
         <style>{window.appStyles}</style>
         <style>{window.appStylesExtra}</style>
         <style>{window.appStylesDesktop}</style>
+        <style>{window.appStylesGilded}</style>
         <div className="phone">
           <ErrorBoundary>
             <window.AppShell/>

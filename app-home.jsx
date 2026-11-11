@@ -1,4 +1,5 @@
-// HOME TAB — greeting, next booking card, quick book, popular services, info strip.
+// HOME TAB — Gilded "Atelier × Gold": B&W parlour banner, next booking or next openings,
+// playing-card menu, craft band, barbers, hours.
 
 const formatDayLabel = (iso) => {
   const d = new Date(iso + "T00:00:00");
@@ -9,55 +10,29 @@ const formatDayLabel = (iso) => {
   return d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" }).toUpperCase();
 };
 
-const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
+const FULL_DAY = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
+
+const HomeTab = ({ user, upcoming, allBookings, daysOff, onBook, onManage }) => {
   const D = window.CHYAKO_DATA;
-  const firstName = (user.name || "GUEST").split(" ")[0].toUpperCase();
-
-  // Status: open / closed (open 09:00–19:00 weekdays/sat, 10:00-17:00 sun)
-  const now = new Date();
-  const dayIdx = (now.getDay() + 6) % 7;
-  const hoursRow = D.hours[dayIdx];
-  const [oh] = hoursRow.open.split(":").map(Number);
-  const [ch] = hoursRow.close.split(":").map(Number);
-  const hourNow = now.getHours();
-  const isOpen = hourNow >= oh && hourNow < ch;
-
-  // Find next free slot today for the bottom hint
-  const todaySlots = D.generateSlots(dayIdx);
-  const nextSlot = todaySlots.find(s => {
-    const [h, m] = s.split(":").map(Number);
-    return (h > hourNow) || (h === hourNow && m > now.getMinutes());
-  }) || "TMRW 09:00";
-
-  const popular = D.services.filter(s => s.popular).slice(0, 3);
-  const quick = D.services.filter(s => !s.popular).slice(0, 6);
+  const firstName = (user.name || "").trim().split(" ")[0].toUpperCase();
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  const barbers = D.activeBarbers();
 
   return (
-    <>
-      {/* HERO greeting */}
-      <section className="hero">
-        <div className="hero-greet">★ WELCOME BACK, {firstName}</div>
-        <h1 className="hero-title">
-          READY FOR<br/>
-          <span className="hero-title-accent">A FRESH ONE?</span>
-        </h1>
-        <div className="hero-meta">
-          <div className="hero-meta-item">
-            <div className="hero-meta-label">SHOP</div>
-            <div className={`hero-meta-val ${isOpen ? "live" : ""}`}>{isOpen ? "OPEN" : "CLOSED"}</div>
-          </div>
-          <div className="hero-meta-item">
-            <div className="hero-meta-label">HOURS</div>
-            <div className="hero-meta-val">{hoursRow.open}—{hoursRow.close}</div>
-          </div>
-          <div className="hero-meta-item">
-            <div className="hero-meta-label">NEXT</div>
-            <div className="hero-meta-val">{nextSlot}</div>
-          </div>
+    <div className="ghome">
+      {/* HERO BANNER */}
+      <section className="ghero">
+        <div className="ghero-top">
+          <window.Fleur/>
+          <window.GoldLogo className="ghero-logo"/>
+        </div>
+        <div className="ghero-copy">
+          <p className="ghero-kicker">{firstName ? `WELCOME BACK, ${firstName}` : "WELCOME TO CHYAKO CUTZ"}</p>
+          <h1 className="ghero-title gt">Take a seat.<br/>We'll do the rest.</h1>
         </div>
       </section>
 
-      {/* UPCOMING BOOKING CARD or BIG BOOK CTA */}
+      {/* NEXT BOOKING or NEXT OPENINGS */}
       {upcoming ? (
         <div className="upcoming">
           <div className="upcoming-eyebrow">
@@ -84,73 +59,58 @@ const HomeTab = ({ user, upcoming, bookings, onBook, onManage, onSeeAll }) => {
           </div>
         </div>
       ) : (
-        <div className="hero-cta-wrap">
-          <button className="btn btn-primary hero-cta" onClick={onBook}>
-            <span>BOOK A CHAIR</span>
-            <span className="btn-arrow">
-              <svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 12L12 2M5 2h7v7" stroke="currentColor" strokeWidth="1.8" fill="none"/></svg>
-            </span>
-          </button>
-        </div>
+        <window.NextOpenings
+          bookings={allBookings}
+          daysOff={daysOff}
+          onPick={({ dateIso, slot }) => onBook({ dateIso, slot })}
+          onBook={() => onBook()}
+        />
       )}
 
-      {/* POPULAR SERVICES */}
-      <div className="sec-head">
-        <div className="sec-num">/01</div>
-        <div>
-          <div className="sec-eyebrow">MOST BOOKED</div>
-          <h2 className="sec-title">POPULAR CUTS</h2>
-        </div>
+      {/* THE MENU — playing cards */}
+      <section className="gsec">
+        <window.SecHead eyebrow="PICK A CARD" title="The Menu"/>
+        <window.CardDeck services={D.services} onPick={(id) => onBook({ services: [id] })}/>
+      </section>
+
+      {/* CRAFT BAND */}
+      <div className="gcraft">
+        <i/>
+        <p>"Every line,<br/>by hand."<small>THE CRAFT · {D.brand.since.toUpperCase()}</small></p>
       </div>
-      <div className="svc-grid">
-        {popular.map((s, i) => (
-          <button key={s.id} className={`svc-tile ${i === 0 ? "feature" : ""}`} onClick={onBook}>
-            <div className="svc-tile-num">{String(i + 1).padStart(2, "0")}</div>
-            <div className="svc-tile-name">{s.name}</div>
-            <div className="svc-tile-row">
-              <span className="svc-tile-price">£{s.price}</span>
-              <span className="svc-tile-mins">{s.mins}MIN</span>
+
+      {/* BARBERS */}
+      <section className="gsec">
+        <window.SecHead eyebrow="THE CHAIRS" title="Our Barbers"/>
+        <div className="gcrew">
+          {barbers.map(b => (
+            <div key={b.id}>
+              <div className="goval">{b.initials}</div>
+              <b>{b.name}</b>
+              <span>{b.role}</span>
             </div>
-            {s.popular && <div className="svc-tile-tag">★ POPULAR</div>}
-          </button>
-        ))}
-      </div>
-
-      {/* QUICK SERVICES LIST */}
-      <div className="sec-head">
-        <div className="sec-num">/02</div>
-        <div>
-          <div className="sec-eyebrow">FULL LINE-UP</div>
-          <h2 className="sec-title">PRICES</h2>
+          ))}
         </div>
-      </div>
-      <div className="svc-list">
-        {quick.map(s => (
-          <button key={s.id} type="button" className="svc-line" onClick={onBook}>
-            <span className="svc-line-name">{s.name}</span>
-            <span className="svc-line-dots"/>
-            <span className="svc-line-price">£{s.price}</span>
-          </button>
-        ))}
-        <button className="svc-line-more" onClick={onBook}>
-          SEE ALL {D.services.length} SERVICES →
-        </button>
-      </div>
+      </section>
 
-      {/* INFO STRIP */}
-      <div className="info-strip">
-        <div className="info-block">
-          <div className="info-eyebrow">FIND US</div>
-          <div className="info-val">RAILWAY BRIDGE<br/>HIGH ST · SUTTON</div>
-        </div>
-        <div className="info-block">
-          <div className="info-eyebrow">CALL</div>
-          <div className="info-val">+44 7888<br/>658 011</div>
-        </div>
-      </div>
+      {/* HOURS + ADDRESS */}
+      <section className="gsec">
+        <window.SecHead eyebrow="VISIT" title="Opening Hours"/>
+        <ul className="ghours">
+          {D.hours.map((h, i) => (
+            <li key={h.day} className={i === todayIdx ? "today" : ""}>
+              <span>{FULL_DAY[h.day]}</span><span>{h.open} – {h.close}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="gaddr">
+          {D.brand.address.split(", ")[0]}<br/>{D.brand.address.split(", ").slice(1).join(", ")}<br/>
+          <a href={`tel:${D.brand.phone.replace(/\s/g, "")}`}>{D.brand.phone}</a>
+        </p>
+      </section>
 
-      <div className="home-foot">CHYAKO//CUTZ · SM1 · EST 23</div>
-    </>
+      <div className="home-foot">CHYAKO CUTZ · {D.brand.since.toUpperCase()}</div>
+    </div>
   );
 };
 

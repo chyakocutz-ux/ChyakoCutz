@@ -1,13 +1,15 @@
 // BOOK SHEET — Service → Barber → Date+Time → Review → Confirmed
 // User is logged in so we pre-fill name/phone/email and skip the details step.
 
-const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }) => {
+const BookSheet = ({ user, bookings, userBookings, daysOff, prefill, onClose, onConfirm }) => {
   const D = window.CHYAKO_DATA;
+  // prefill comes from the home screen: a tapped menu card ({services}) or a next-opening chip ({dateIso, slot}).
+  // Every step is still walked through; the time step re-validates the slot.
   const [step, setStep] = React.useState(0);
-  const [selectedServices, setSelectedServices] = React.useState([]);
+  const [selectedServices, setSelectedServices] = React.useState(prefill?.services || []);
   const [selectedBarber, setSelectedBarber] = React.useState(null);
-  const [selectedDate, setSelectedDate] = React.useState(null);
-  const [selectedSlot, setSelectedSlot] = React.useState(null);
+  const [selectedDate, setSelectedDate] = React.useState(prefill?.dateIso || null);
+  const [selectedSlot, setSelectedSlot] = React.useState(prefill?.slot || null);
   const [friend, setFriend] = React.useState(false);
   const [savedId, setSavedId] = React.useState(null);
   const [submitting, setSubmitting] = React.useState(false);
@@ -24,6 +26,7 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
     if (step === 1) return selectedBarber !== null;
     if (step === 2) {
       if (!selectedDate || !selectedSlot) return false;
+      if (D.isSlotPast(selectedDate, selectedSlot) || D.isSlotTaken(selectedDate, selectedSlot, selectedBarber || "any", bookings, daysOff, totalMins)) return false;
       const alreadyBooked = (userBookings || []).some(b =>
         b.status !== "cancelled" && b.status !== "deleted" && b.dateIso === selectedDate
       );
@@ -32,6 +35,14 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
     if (step === 3) return true;
     return false;
   };
+
+  // A prefilled time (from the home screen) may no longer fit once barber/services are chosen.
+  React.useEffect(() => {
+    if (step === 2 && selectedDate && selectedSlot &&
+        (D.isSlotPast(selectedDate, selectedSlot) || D.isSlotTaken(selectedDate, selectedSlot, selectedBarber || "any", bookings, daysOff, totalMins))) {
+      setSelectedSlot(null);
+    }
+  }, [step]);
 
   const toggleService = (id) => setSelectedServices(selectedServices.includes(id) ? selectedServices.filter(x => x !== id) : [...selectedServices, id]);
   const days = React.useMemo(() => D.next14Days(), []);
@@ -105,7 +116,7 @@ const BookSheet = ({ user, bookings, userBookings, daysOff, onClose, onConfirm }
               return (
                 <button key={s.id} className={`svc-card ${checked ? "checked" : ""}`} onClick={() => toggleService(s.id)}>
                   <div className="svc-card-l">
-                    <div className="svc-card-num">{String(i + 1).padStart(2, "0")}</div>
+                    <div className="svc-card-thumb" style={{ backgroundImage: `url(${window.svcPhoto(s.id)})` }} aria-hidden="true"/>
                     <div>
                       <div className="svc-card-name">{s.name}</div>
                       <div className="svc-card-meta">{s.mins} MIN{s.popular ? " · ★" : ""}</div>
